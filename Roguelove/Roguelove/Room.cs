@@ -10,7 +10,13 @@ namespace Roguelove
 {
     public class Room
     {
+        /// <summary>
+        /// DO NOT SET
+        /// </summary>
         public Map map;
+        /// <summary>
+        /// DO NOT SET/ADJUST
+        /// </summary>
         public HashSet<Entity> entities;
         HashSet<Entity> entitiesAdd;
         public readonly int tileSize = 64;
@@ -24,15 +30,35 @@ namespace Roguelove
         public readonly double blockEdgeRate = 0.5;
         public readonly double blockCornerRate = 0.125;
 
+        /// <summary>
+        /// DO NOT SET
+        /// </summary>
+        public Room left;
+        /// <summary>
+        /// DO NOT SET
+        /// </summary>
+        public Room right;
+        /// <summary>
+        /// DO NOT SET
+        /// </summary>
+        public Room up;
+        /// <summary>
+        /// DO NOT SET
+        /// </summary>
+        public Room down;
+        /// <summary>
+        /// DO NOT SET
+        /// </summary>
+        public RoomType roomType;
+
         public Room(Map map)
         {
             this.map = map;
             this.entities = new HashSet<Entity>();
             this.entitiesAdd = new HashSet<Entity>();
-
         }
 
-        public void Generate(Room left, Room right, Room up, Room down)
+        public void Generate()
         {
             //cleanup shit
             foreach (var entity in entities)
@@ -47,7 +73,7 @@ namespace Roguelove
             while (!done)
             {
                 wall = new bool[tilesWidth, tilesHeight];
-
+                
                 //Outline
                 for (int x = 0; x < tilesWidth; x++)
                 {
@@ -155,8 +181,7 @@ namespace Roguelove
         {
             KeyboardState keyboardState = Keyboard.GetState();
             if (keyboardState.IsKeyDown(Keys.Enter))
-                Generate(this, this, this, this);
-
+                Generate();
             //Stuff
             foreach (var entity in entities)
                 entity.Update();
@@ -181,6 +206,7 @@ namespace Roguelove
 
             Matrix matrix;
             Vector2 offset;
+            Vector2 menuOffset = new Vector2((viewWidth - tilesWidth * tileSize) / 2, HUDheight);
             float scale;
             if (screen.X / screen.Y > (float)viewWidth / (float)viewHeight)
             {
@@ -194,26 +220,92 @@ namespace Roguelove
             }
 
             //GAME SCREEN
-            matrix = Matrix.CreateTranslation(new Vector3(offset, 0))
-                * Matrix.CreateTranslation((viewWidth - tilesWidth * tileSize) / 2, HUDheight, 0)
-                * Matrix.CreateScale(scale);
+            {
+                matrix = Matrix.CreateTranslation(new Vector3(offset, 0))
+                    * Matrix.CreateTranslation(new Vector3(menuOffset, 0))
+                    * Matrix.CreateScale(scale);
 
-            map.game.spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, matrix);
+                map.game.spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.LinearWrap, null, null, null, matrix);
 
-            foreach (var entity in entities)
-                entity.Draw();
+                //draw background
+                Rectangle rectangleBackground = new Rectangle((int)(-offset.X - menuOffset.X), (int)(-offset.Y - menuOffset.Y), (int)(screen.X / scale), (int)(screen.Y / scale));
+                map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("background"), rectangleBackground, rectangleBackground, Color.White);
 
-            map.game.spriteBatch.End();
+                //draw all entities
+                foreach (var entity in entities)
+                    entity.Draw();
 
-            //HUD!!!
-            matrix = Matrix.CreateTranslation(new Vector3(offset, 0))
-                * Matrix.CreateScale(scale);
+                map.game.spriteBatch.End();
+            }
 
-            map.game.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, matrix);
+            //DRAW THE HUD!!!
+            {
+                matrix = Matrix.CreateTranslation(new Vector3(offset, 0))
+                    * Matrix.CreateScale(scale);
 
-            map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("block"), new Rectangle(0, 0, viewWidth, HUDheight), Color.Red);
+                map.game.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, matrix);
 
-            map.game.spriteBatch.End();
+                //draw rooms
+                //map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("block"), new Rectangle(0, 0, viewWidth, HUDheight), Color.Red);
+                {
+                    Dictionary<Vector2, Room> rooms = new Dictionary<Vector2, Room>();
+                    HashSet<Vector2> used = new HashSet<Vector2>();
+                    rooms.Add(new Vector2(500), this);
+                    while (rooms.Count > 0)
+                    {
+                        var room = rooms.First();
+                        rooms.Remove(room.Key);
+                        used.Add(room.Key);
+
+                        if (room.Value.left != null)
+                        {//left
+                            Vector2 key = room.Key - Vector2.UnitX * tileSize;
+                            if (!used.Contains(key))
+                                if (!rooms.ContainsKey(key))
+                                    rooms.Add(key, room.Value.left);
+                        }
+                        if (room.Value.right != null)
+                        {//right
+                            Vector2 key = room.Key + Vector2.UnitX * tileSize;
+                            if (!used.Contains(key))
+                                if (!rooms.ContainsKey(key))
+                                    rooms.Add(key, room.Value.right);
+                        }
+                        if (room.Value.up != null)
+                        {//up
+                            Vector2 key = room.Key - Vector2.UnitY * tileSize;
+                            if (!used.Contains(key))
+                                if (!rooms.ContainsKey(key))
+                                    rooms.Add(key, room.Value.up);
+                        }
+                        if (room.Value.down != null)
+                        {//down
+                            Vector2 key = room.Key + Vector2.UnitY * tileSize;
+                            if (!used.Contains(key))
+                                if (!rooms.ContainsKey(key))
+                                    rooms.Add(key, room.Value.down);
+                        }
+                        Color color;
+                        switch (room.Value.roomType)
+                        {
+                            case RoomType.Enemy:
+                                color = Color.Orange;
+                                break;
+                            case RoomType.Start:
+                                color = Color.Green;
+                                break;
+                            case RoomType.Boss:
+                                color = Color.Red;
+                                break;
+                            default:
+                                throw new Exception("WTFBLARGH");
+                        }
+                        map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("block"), room.Key, color);
+                    }
+                }
+
+                map.game.spriteBatch.End();
+            }
         }
     }
 }
