@@ -53,8 +53,9 @@ namespace Roguelove
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-
-            GameStateChange(new Map(this, 0));
+            List<PlayerControl> playersControl = new List<PlayerControl>();
+            playersControl.Add(new PlayerControl(0, InputType.Keyboard));
+            GameStateChange(new Map(this, playersControl, 0));
         }
 
         public void GameStateChange(GameState gameState)
