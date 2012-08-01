@@ -17,7 +17,12 @@ namespace Roguelove
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        /// <summary>
+        /// DO NOT SET
+        /// </summary>
+        public SpriteBatch spriteBatch;
+
+        GameState gameState;
 
         public Game1()
         {
@@ -48,6 +53,13 @@ namespace Roguelove
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+
+            GameStateChange(new Map(this, 0));
+        }
+
+        public void GameStateChange(GameState gameState)
+        {
+            this.gameState = gameState;
         }
 
         /// <summary>
@@ -66,11 +78,7 @@ namespace Roguelove
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
-
-            // TODO: Add your update logic here
+            gameState.Update();
 
             base.Update(gameTime);
         }
@@ -81,9 +89,7 @@ namespace Roguelove
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
+            gameState.Draw();
 
             base.Draw(gameTime);
         }
