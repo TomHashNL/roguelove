@@ -40,6 +40,15 @@ namespace Roguelove
         {
             // TODO: Add your initialization logic here
 
+            graphics.SynchronizeWithVerticalRetrace = false;
+
+#if !DEBUG
+            graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
+            graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Height;
+            graphics.IsFullScreen = true;
+#endif
+            graphics.ApplyChanges();
+
             base.Initialize();
         }
 
