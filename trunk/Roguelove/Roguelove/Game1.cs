@@ -39,12 +39,12 @@ namespace Roguelove
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            //IsFixedTimeStep = false;
             graphics.SynchronizeWithVerticalRetrace = false;
 
 #if !DEBUG
             graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
-            graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Height;
+            graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
             graphics.IsFullScreen = true;
 #endif
             graphics.ApplyChanges();
