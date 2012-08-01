@@ -19,7 +19,8 @@ namespace Roguelove
             this.playersControl = playersControl;
             this.floor = floor;
 
-            var room = new Room(this, false, false, false, false);
+            var room = new Room(this);
+            room.Generate(null, null, null, null);
             //algorithm to generate all the rooms on this floor!!!!
             //generate the map!!!!
             //then generate all the rooms in it ;D
