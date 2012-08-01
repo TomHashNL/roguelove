@@ -107,6 +107,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Block.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="InputType.cs" />
