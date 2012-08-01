@@ -39,8 +39,13 @@ namespace Roguelove
 
         public void Draw()
         {
+            //DO SOME TRANSFORM ON THIS LATER!!!
+            map.game.spriteBatch.Begin();
+            
             foreach (var entity in entities)
                 entity.Draw();
+
+            map.game.spriteBatch.End();
         }
     }
 }
