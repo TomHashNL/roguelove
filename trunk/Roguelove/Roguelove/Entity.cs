@@ -21,7 +21,7 @@ namespace Roguelove
         public Vector2 position;
         public Vector2 scale;
         public float rotation;
-        public Rectangle sourceRectangle;
+        public Rectangle? sourceRectangle;
         public SpriteEffects spriteEffects;
         public Color color;
         public Vector2 origin;
