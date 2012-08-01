@@ -46,6 +46,9 @@ namespace Roguelove
             graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
             graphics.IsFullScreen = true;
+#else
+            IsMouseVisible = true;
+            Window.AllowUserResizing = true;
 #endif
             graphics.ApplyChanges();
 

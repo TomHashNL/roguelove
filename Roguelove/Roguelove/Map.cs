@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Roguelove
 {
@@ -46,6 +47,9 @@ namespace Roguelove
 
         public override void Update()
         {
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                game.Exit();
+
             room.Update();
         }
 
