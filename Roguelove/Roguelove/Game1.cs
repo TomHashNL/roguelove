@@ -22,6 +22,8 @@ namespace Roguelove
         /// </summary>
         public SpriteBatch spriteBatch;
 
+        public Random random = new Random();
+
         GameState gameState;
 
         public Game1()
@@ -39,7 +41,7 @@ namespace Roguelove
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            //IsFixedTimeStep = false;
+            IsFixedTimeStep = false;
             graphics.SynchronizeWithVerticalRetrace = false;
 
 #if !DEBUG
@@ -67,8 +69,8 @@ namespace Roguelove
             // TODO: use this.Content to load your game content here
             List<PlayerControl> playersControl = new List<PlayerControl>();
             playersControl.Add(new PlayerControl(0, InputType.Keyboard));
-            playersControl.Add(new PlayerControl(1, InputType.Gamepad1));
-            playersControl.Add(new PlayerControl(2, InputType.Gamepad2));
+            //playersControl.Add(new PlayerControl(1, InputType.Gamepad1));
+            //playersControl.Add(new PlayerControl(2, InputType.Gamepad2));
             GameStateChange(new Map(this, playersControl, 0));
         }
 

@@ -11,7 +11,11 @@ namespace Roguelove
     {
         public int floor;
         Room room;
-        List<PlayerControl> playersControl;
+        /// <summary>
+        /// DO NOT ADJUST!
+        /// </summary>
+        public List<PlayerControl> playersControl;
+        public readonly double RoomAdjacentSuccessRate = .4;
 
         public Map(Game1 game, List<PlayerControl> playersControl, int floor)
             : base(game)
@@ -24,8 +28,6 @@ namespace Roguelove
 
         public Room Generate(int roomsCountTarget)
         {
-            Random random = new Random();
-
             //try to make a map with a valid bossroom and such
             while (true)
             {
@@ -51,7 +53,9 @@ namespace Roguelove
                         roomsFail.Remove(fail);
                     }
 
-                    Vector2 room = roomsEvaluate.First();
+                    var roomsArray = roomsEvaluate.ToArray();
+                    Vector2 room = roomsArray[game.random.Next(roomsArray.Length)];
+                    //Vector2 room = roomsEvaluate.First();
                     roomsEvaluate.Remove(room);
 
                     rooms.Add(room, new Room(this));
@@ -63,7 +67,7 @@ namespace Roguelove
                             if (!rooms.ContainsKey(roomNew))
                                 if (!roomsEvaluate.Contains(roomNew))
                                 {
-                                    if (random.NextDouble() < .4)
+                                    if (game.random.NextDouble() < RoomAdjacentSuccessRate)
                                         roomsEvaluate.Add(roomNew);
                                     else
                                         roomsFail.Add(roomNew);
@@ -74,9 +78,11 @@ namespace Roguelove
                 bool roomBoss = false;
                 Room roomStart = null;
 
-                var roomsArray = rooms.ToArray();
-                roomStart = roomsArray[random.Next(roomsArray.Length)].Value;
-                roomStart.roomType = RoomType.Start;
+                {
+                    var roomsArray = rooms.ToArray();
+                    roomStart = roomsArray[game.random.Next(roomsArray.Length)].Value;
+                    roomStart.roomType = RoomType.Start;
+                }
 
                 foreach (var room in rooms)
                 {
@@ -95,7 +101,7 @@ namespace Roguelove
                             room.Value.roomType = RoomType.Boss;
                             roomBoss = true;
                         }
-                        //else if ()//for other types of rooms
+                    //else if ()//for other types of rooms
                 }
 
                 //continue!!!! ;D
@@ -110,15 +116,39 @@ namespace Roguelove
             }
         }
 
+        /// <summary>
+        /// Place players at center of new room with zero velocity!
+        /// </summary>
+        /// <param name="room"></param>
         public void RoomChange(Room room)
         {
+            RoomChange(room, new Vector2(room.tilesWidth * room.tileSize, room.tilesHeight * room.tileSize) / 2);
+        }
+
+        /// <summary>
+        /// place players at position and velocity in new room!
+        /// </summary>
+        /// <param name="room"></param>
+        /// <param name="position"></param>
+        /// <param name="velocity"></param>
+        public void RoomChange(Room room, Vector2 position)
+        {
+            //remove previous players =O
+            if (this.room != null)
+                foreach (var playerControl in playersControl)
+                    if (playerControl.player != null)
+                        playerControl.player.Destroy();
+
+            //set new room!
             this.room = room;
+
+            this.room.visited = true;
 
             //place all the players in the current map =o
             foreach (var playerControl in playersControl)
             {
                 //FIND THE MIDDLE OF THE ROOM HERE TO PLACE PLAYERS???
-                playerControl.player = new Player(this.room, playerControl, Vector2.Zero, Vector2.Zero);
+                playerControl.player = new Player(this.room, playerControl, position, Vector2.Zero);
                 this.room.Instantiate(playerControl.player);
             }
         }

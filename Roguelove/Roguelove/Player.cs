@@ -33,15 +33,78 @@ namespace Roguelove
 
         public override void Update()
         {
-            var playerControlState = playerControl.GetPlayerControlState();
+            //movement
+            {
+                var playerControlState = playerControl.GetPlayerControlState();
 
-            velocity += playerControlState.position * 2f;
-            velocity *= .9f;
+                velocity += playerControlState.position * 2f;
+                velocity *= .9f;
 
-            position += velocity;
+                position += velocity;
 
-            if (playerControlState.fire.LengthSquared() > .3 * .3)
-                room.Instantiate(new Bullet(room, position, Vector2.Normalize(playerControlState.fire) * 15 + velocity / 2));
+                if (playerControlState.fire.LengthSquared() > .3 * .3)
+                    room.Instantiate(new Bullet(room, position, Vector2.Normalize(playerControlState.fire) * 15 + velocity / 2));
+            }
+
+            //check doors!
+            {
+                bool changeRoom = false;
+                float distanceSquaredMax = 0;
+                foreach (var playerControl in room.map.playersControl)
+                    if (playerControl.player != null)
+                    {
+                        float distanceSquared = (position - playerControl.player.position).LengthSquared();
+                        if (distanceSquared > distanceSquaredMax)
+                            distanceSquaredMax = distanceSquared;
+                    }
+                if (distanceSquaredMax < room.tileSize * room.tileSize)
+                    changeRoom = true;
+
+                //left
+                if (position.X < (0 + .5f) * room.tileSize)
+                {
+                    if (changeRoom && room.left != null)
+                        room.map.RoomChange(room.left, position + Vector2.UnitX * (room.tilesWidth - 2) * room.tileSize);
+                    else
+                    {
+                        position.X = (0 + .5f) * room.tileSize;
+                        velocity.X = 0;
+                    }
+                }
+                //right
+                if (position.X > (room.tilesWidth - .5f) * room.tileSize)
+                {
+                    if (changeRoom && room.right != null)
+                        room.map.RoomChange(room.right, position - Vector2.UnitX * (room.tilesWidth - 2) * room.tileSize);
+                    else
+                    {
+                        position.X = (room.tilesWidth - .5f) * room.tileSize;
+                        velocity.X = 0;
+                    }
+                }
+                //up
+                if (position.Y < (0 + .5f) * room.tileSize)
+                {
+                    if (changeRoom && room.up != null)
+                        room.map.RoomChange(room.up, position + Vector2.UnitY * (room.tilesHeight - 2) * room.tileSize);
+                    else
+                    {
+                        position.Y = (0 + .5f) * room.tileSize;
+                        velocity.Y = 0;
+                    }
+                }
+                //down
+                if (position.Y > (room.tilesHeight - .5f) * room.tileSize)
+                {
+                    if (changeRoom && room.down != null)
+                        room.map.RoomChange(room.down, position - Vector2.UnitY * (room.tilesHeight - 2) * room.tileSize);
+                    else
+                    {
+                        position.Y = (room.tilesHeight - .5f) * room.tileSize;
+                        velocity.Y = 0;
+                    }
+                }
+            }
         }
     }
 }
