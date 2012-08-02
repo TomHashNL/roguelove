@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Roguelove
 {
@@ -20,6 +21,9 @@ namespace Roguelove
             this.playerControl = playerControl;
             this.position = position;
             this.velocity = velocity;
+
+            this.texture = room.map.game.Content.Load<Texture2D>("player");
+            this.origin = new Vector2(texture.Width, texture.Height) / 2;
         }
 
         protected override void OnDestroy()
@@ -30,9 +34,14 @@ namespace Roguelove
         public override void Update()
         {
             var playerControlState = playerControl.GetPlayerControlState();
-            //use it here for input! =)
+
+            velocity += playerControlState.position * 2f;
+            velocity *= .9f;
 
             position += velocity;
+
+            if (playerControlState.fire.LengthSquared() > .3 * .3)
+                room.Instantiate(new Bullet(room, position, Vector2.Normalize(playerControlState.fire) * 15 + velocity / 2));
         }
     }
 }
