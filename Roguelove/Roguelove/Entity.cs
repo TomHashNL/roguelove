@@ -27,6 +27,9 @@ namespace Roguelove
         public Vector2 origin;
         public float layerDepth;
         public bool visible;
+        public float radius;
+        public Vector2 velocity;
+        public float mass;
 
         public Entity(Room room)
         {
@@ -35,6 +38,8 @@ namespace Roguelove
             this.visible = true;
             this.scale = Vector2.One;
             this.color = Color.White;
+            this.radius = room.tileSize / 2;
+            this.mass = 1;
         }
 
         protected abstract void OnDestroy();
@@ -65,6 +70,52 @@ namespace Roguelove
                         scale,
                         spriteEffects,
                         layerDepth);
+        }
+
+        public HashSet<Entity> Collide(HashSet<Type> types, bool solid)
+        {
+            HashSet<Entity> collisions = new HashSet<Entity>();
+
+            foreach (var entity in room.entities)
+                if (types.Contains(entity.GetType()))
+                    if (entity != this)
+                    {
+                        Vector2 center = entity.position + new Vector2(room.tileSize / 2) - entity.origin;
+                        if (position.X + radius > center.X - entity.radius)
+                            if (position.X - radius < center.X + entity.radius)
+                                if (position.Y + radius > center.Y - entity.radius)
+                                    if (position.Y - radius < center.Y + entity.radius)
+                                    {
+                                        float distance = (position - center).Length();
+                                        float distanceCollision = radius + entity.radius;
+                                        if (distance < distanceCollision)
+                                        {
+                                            collisions.Add(entity);
+
+                                            if (solid)
+                                            {
+                                                double direction = Math.Atan2(position.Y - center.Y, position.X - center.X);
+                                                Vector2 blockVector = new Vector2((float)Math.Cos(direction), (float)Math.Sin(direction));
+                                                Vector2 lol = blockVector * (distanceCollision - distance) / 2;
+                                                if (lol.Length() > 10)
+                                                    lol = Vector2.Normalize(lol) * 10;
+                                                velocity += lol;
+                                                //velocity = Vector2.Transform(velocity, Quaternion.CreateFromAxisAngle(Vector3.UnitZ, -(float)direction));
+                                                //if (velocity.X > 0)
+                                                //    velocity.X = 0;
+                                                //velocity = Vector2.Transform(velocity, Quaternion.CreateFromAxisAngle(Vector3.UnitZ, +(float)direction));
+
+                                                //entity.velocity += mass / entity.mass
+                                                //Vector2 v = Vector2.Lerp(velocity, entity.velocity, .5f);
+                                                //velocity = v;
+                                                entity.velocity *= .8f;
+                                                //entity.velocity = v;
+                                            }
+                                        }
+                                    }
+                    }
+
+            return collisions;
         }
     }
 }

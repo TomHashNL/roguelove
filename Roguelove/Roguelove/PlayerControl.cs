@@ -47,6 +47,10 @@ namespace Roguelove
                     playerControlState.position.Y -= 1;
                 if (keyboardState.IsKeyDown(Keys.S))
                     playerControlState.position.Y += 1;
+
+                if (playerControlState.position.LengthSquared() > 1)
+                    playerControlState.position.Normalize();
+
                 if (keyboardState.IsKeyDown(Keys.Left))
                     playerControlState.fire.X -= 1;
                 if (keyboardState.IsKeyDown(Keys.Right))
@@ -55,6 +59,7 @@ namespace Roguelove
                     playerControlState.fire.Y -= 1;
                 if (keyboardState.IsKeyDown(Keys.Down))
                     playerControlState.fire.Y += 1;
+
                 playerControlState.item = keyboardState.IsKeyDown(Keys.Space);
                 playerControlState.bomb = keyboardState.IsKeyDown(Keys.E);
 

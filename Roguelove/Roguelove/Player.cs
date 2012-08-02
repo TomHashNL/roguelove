@@ -13,7 +13,6 @@ namespace Roguelove
         /// DO NOT SET
         /// </summary>
         public PlayerControl playerControl;
-        Vector2 velocity;
 
         public Player(Room room, PlayerControl playerControl, Vector2 position, Vector2 velocity)
             : base(room)
@@ -37,20 +36,7 @@ namespace Roguelove
             var playerControlState = playerControl.GetPlayerControlState();
 
             velocity += playerControlState.position * 2f;
-            velocity *= .9f;
-
-            //foreach (var entity in room.entities)
-            //{
-            //    Type type = entity.GetType();
-            //    if (type == typeof(Block) ||
-            //        type == typeof(Hole))
-            //    {
-            //        if ((position - entity.position + new Vector2(32)).Length() < 64)
-            //            velocity *= -1;
-            //    }
-
-            //    //if (position + velocity)
-            //}
+            velocity *= .8f;
 
             //check doors!
             {
@@ -63,7 +49,7 @@ namespace Roguelove
                         if (distanceSquared > distanceSquaredMax)
                             distanceSquaredMax = distanceSquared;
                     }
-                if (distanceSquaredMax < room.tileSize * room.tileSize)
+                if (distanceSquaredMax < room.tileSize * 4 * room.tileSize * 4)
                     changeRoom = true;
 
                 //left
@@ -113,6 +99,8 @@ namespace Roguelove
             }
 
             //apply physics!
+            Collide(new HashSet<Type>(new[] { typeof(Block), typeof(WallBlock), typeof(Hole), typeof(Player), }), true);
+
             position += velocity;
 
             if (playerControlState.fire.LengthSquared() > .3 * .3)
