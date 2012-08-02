@@ -20,10 +20,10 @@ namespace Roguelove
         public HashSet<Entity> entities;
         HashSet<Entity> entitiesAdd;
         public readonly int tileSize = 64;
-        public readonly int HUDheight = 120;
-        public readonly int tilesWidth = 29;
-        public readonly int tilesHeight = 15;
-        public readonly int viewWidth = 1920;
+        public readonly int HUDheight = 248;
+        public readonly int tilesWidth = 23;
+        public readonly int tilesHeight = 13;
+        public readonly int viewWidth = 1472;
         public readonly int viewHeight = 1080;
 
         public readonly double blockRate = 0.125;
@@ -53,6 +53,7 @@ namespace Roguelove
         /// DO NOT SET
         /// </summary>
         public RoomType roomType;
+        public bool visited;
 
         public Room(Map map)
         {
@@ -68,17 +69,17 @@ namespace Roguelove
                 entity.Destroy();
 
             //yay go!
-            Random rand = new Random();
+            Random random = map.game.random;
             Entity[,] grid = new Entity[tilesWidth, tilesHeight];
 
             switch (roomType)
             {
                 case(RoomType.Start):
                 case(RoomType.Boss):
-                    grid = GenerateStartRoom(rand);
+                    grid = GenerateStartRoom(random);
                     break;
                 case (RoomType.Enemy):
-                    grid = GenerateEnemyRoom(rand);
+                    grid = GenerateEnemyRoom(random);
                     break;
             }
 
@@ -90,7 +91,7 @@ namespace Roguelove
         }
 
         //Generate start room
-        private Entity[,] GenerateStartRoom(Random rand)
+        private Entity[,] GenerateStartRoom(Random random)
         {
             Entity[,] grid = new Entity[tilesWidth, tilesHeight];
 
@@ -116,7 +117,7 @@ namespace Roguelove
             return grid;
         }
         //Generate enemy room
-        private Entity[,] GenerateEnemyRoom(Random rand)
+        private Entity[,] GenerateEnemyRoom(Random random)
         {
             Entity[,] grid = new Entity[tilesWidth, tilesHeight];
 
@@ -143,48 +144,48 @@ namespace Roguelove
                 {
                     for (int y = 1; y < tilesHeight - 1; y++)
                     {
-                        if (rand.NextDouble() < blockRate)
+                        if (random.NextDouble() < blockRate)
                         {
-                            if (rand.NextDouble() < blockHoleRate)
+                            if (random.NextDouble() < blockHoleRate)
                             {
                                 grid[x, y] = new Hole(this, new Vector2(x * tileSize, y * tileSize));
 
-                                if (x != 1 && rand.NextDouble() < blockEdgeRate)
+                                if (x != 1 && random.NextDouble() < blockEdgeRate)
                                     grid[x - 1, y] = new Hole(this, new Vector2((x - 1) * tileSize, y * tileSize));
-                                if (y != 1 && rand.NextDouble() < blockEdgeRate)
+                                if (y != 1 && random.NextDouble() < blockEdgeRate)
                                     grid[x, y - 1] = new Hole(this, new Vector2(x * tileSize, (y - 1) * tileSize));
-                                if (x != tilesWidth - 2 && rand.NextDouble() < blockEdgeRate)
+                                if (x != tilesWidth - 2 && random.NextDouble() < blockEdgeRate)
                                     grid[x + 1, y] = new Hole(this, new Vector2((x + 1) * tileSize, y * tileSize));
-                                if (y != tilesHeight - 2 && rand.NextDouble() < blockEdgeRate)
+                                if (y != tilesHeight - 2 && random.NextDouble() < blockEdgeRate)
                                     grid[x, y + 1] = new Hole(this, new Vector2(x * tileSize, (y + 1) * tileSize));
-                                if (x != 1 && y != 1 && rand.NextDouble() < blockCornerRate)
+                                if (x != 1 && y != 1 && random.NextDouble() < blockCornerRate)
                                     grid[x - 1, y - 1] = new Hole(this, new Vector2((x - 1) * tileSize, (y - 1) * tileSize));
-                                if (x != 1 && y != tilesHeight - 2 && rand.NextDouble() < blockCornerRate)
+                                if (x != 1 && y != tilesHeight - 2 && random.NextDouble() < blockCornerRate)
                                     grid[x - 1, y + 1] = new Hole(this, new Vector2((x - 1) * tileSize, (y + 1) * tileSize));
-                                if (x != tilesWidth - 2 && y != 1 && rand.NextDouble() < blockCornerRate)
+                                if (x != tilesWidth - 2 && y != 1 && random.NextDouble() < blockCornerRate)
                                     grid[x + 1, y - 1] = new Hole(this, new Vector2((x + 1) * tileSize, (y - 1) * tileSize));
-                                if (x != tilesWidth - 2 && y != tilesHeight - 2 && rand.NextDouble() < blockCornerRate)
+                                if (x != tilesWidth - 2 && y != tilesHeight - 2 && random.NextDouble() < blockCornerRate)
                                     grid[x + 1, y + 1] = new Hole(this, new Vector2((x + 1) * tileSize, (y + 1) * tileSize));
                             }
                             else
                             {
                                 grid[x, y] = new Block(this, new Vector2(x * tileSize, y * tileSize));
 
-                                if (x != 1 && rand.NextDouble() < blockEdgeRate)
+                                if (x != 1 && random.NextDouble() < blockEdgeRate)
                                     grid[x - 1, y] = new Block(this, new Vector2((x - 1) * tileSize, y * tileSize));
-                                if (y != 1 && rand.NextDouble() < blockEdgeRate)
+                                if (y != 1 && random.NextDouble() < blockEdgeRate)
                                     grid[x, y - 1] = new Block(this, new Vector2(x * tileSize, (y - 1) * tileSize));
-                                if (x != tilesWidth - 2 && rand.NextDouble() < blockEdgeRate)
+                                if (x != tilesWidth - 2 && random.NextDouble() < blockEdgeRate)
                                     grid[x + 1, y] = new Block(this, new Vector2((x + 1) * tileSize, y * tileSize));
-                                if (y != tilesHeight - 2 && rand.NextDouble() < blockEdgeRate)
+                                if (y != tilesHeight - 2 && random.NextDouble() < blockEdgeRate)
                                     grid[x, y + 1] = new Block(this, new Vector2(x * tileSize, (y + 1) * tileSize));
-                                if (x != 1 && y != 1 && rand.NextDouble() < blockCornerRate)
+                                if (x != 1 && y != 1 && random.NextDouble() < blockCornerRate)
                                     grid[x - 1, y - 1] = new Block(this, new Vector2((x - 1) * tileSize, (y - 1) * tileSize));
-                                if (x != 1 && y != tilesHeight - 2 && rand.NextDouble() < blockCornerRate)
+                                if (x != 1 && y != tilesHeight - 2 && random.NextDouble() < blockCornerRate)
                                     grid[x - 1, y + 1] = new Block(this, new Vector2((x - 1) * tileSize, (y + 1) * tileSize));
-                                if (x != tilesWidth - 2 && y != 1 && rand.NextDouble() < blockCornerRate)
+                                if (x != tilesWidth - 2 && y != 1 && random.NextDouble() < blockCornerRate)
                                     grid[x + 1, y - 1] = new Block(this, new Vector2((x + 1) * tileSize, (y - 1) * tileSize));
-                                if (x != tilesWidth - 2 && y != tilesHeight - 2 && rand.NextDouble() < blockCornerRate)
+                                if (x != tilesWidth - 2 && y != tilesHeight - 2 && random.NextDouble() < blockCornerRate)
                                     grid[x + 1, y + 1] = new Block(this, new Vector2((x + 1) * tileSize, (y + 1) * tileSize));
                             }
                         }
@@ -246,6 +247,7 @@ namespace Roguelove
                 if (up != null) openDoors++;
                 if (right != null) openDoors++;
                 if (down != null) openDoors++;
+
                 if (openDoors == 1)
                 {
                     int accessibleTiles = 0;
@@ -336,62 +338,83 @@ namespace Roguelove
 
                 map.game.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, matrix);
 
+                map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("hud"), Vector2.Zero, Color.White);
+
                 //draw rooms
                 //map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("block"), new Rectangle(0, 0, viewWidth, HUDheight), Color.Red);
                 {
+                    Vector2 offsetMap = new Vector2(viewWidth / 2, 8 * tileSize / 2 / 2) - new Vector2(tileSize / 2 / 2);
+
                     Dictionary<Vector2, Room> rooms = new Dictionary<Vector2, Room>();
                     HashSet<Vector2> used = new HashSet<Vector2>();
-                    rooms.Add(new Vector2(500), this);
+                    rooms.Add(Vector2.Zero, this);
                     while (rooms.Count > 0)
                     {
                         var room = rooms.First();
                         rooms.Remove(room.Key);
                         used.Add(room.Key);
 
+                        //add neighbors!
                         if (room.Value.left != null)
                         {//left
-                            Vector2 key = room.Key - Vector2.UnitX * tileSize;
+                            Vector2 key = room.Key - Vector2.UnitX;
                             if (!used.Contains(key))
                                 if (!rooms.ContainsKey(key))
                                     rooms.Add(key, room.Value.left);
                         }
                         if (room.Value.right != null)
                         {//right
-                            Vector2 key = room.Key + Vector2.UnitX * tileSize;
+                            Vector2 key = room.Key + Vector2.UnitX;
                             if (!used.Contains(key))
                                 if (!rooms.ContainsKey(key))
                                     rooms.Add(key, room.Value.right);
                         }
                         if (room.Value.up != null)
                         {//up
-                            Vector2 key = room.Key - Vector2.UnitY * tileSize;
+                            Vector2 key = room.Key - Vector2.UnitY;
                             if (!used.Contains(key))
                                 if (!rooms.ContainsKey(key))
                                     rooms.Add(key, room.Value.up);
                         }
                         if (room.Value.down != null)
                         {//down
-                            Vector2 key = room.Key + Vector2.UnitY * tileSize;
+                            Vector2 key = room.Key + Vector2.UnitY;
                             if (!used.Contains(key))
                                 if (!rooms.ContainsKey(key))
                                     rooms.Add(key, room.Value.down);
                         }
-                        Color color;
-                        switch (room.Value.roomType)
-                        {
-                            case RoomType.Enemy:
-                                color = Color.Orange;
-                                break;
-                            case RoomType.Start:
-                                color = Color.Green;
-                                break;
-                            case RoomType.Boss:
-                                color = Color.Red;
-                                break;
-                            default:
-                                throw new Exception("WTFBLARGH");
-                        }
-                        map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("block"), room.Key, color);
+
+                        //if in view
+                        //if visited or adjacent to visited to room, THEN DRAW
+                        if (room.Key.X > -8 && room.Key.X < +8 && room.Key.Y > -4 && room.Key.Y < +4)
+                            if (room.Value.visited ||
+                                (room.Value.left != null && room.Value.left.visited) ||
+                                (room.Value.right != null && room.Value.right.visited) ||
+                                (room.Value.up != null && room.Value.up.visited) ||
+                                (room.Value.down != null && room.Value.down.visited))
+                            {
+                                Color color = new Color(new Vector3(.4f));
+                                if (room.Value == this)
+                                    color = Color.White;
+                                if (!room.Value.visited)
+                                    color = new Color(new Vector3(.1f));
+                                map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("room"), offsetMap + room.Key * tileSize / 2, color);
+                                switch (room.Value.roomType)
+                                {
+                                    case RoomType.Boss:
+                                        map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomBoss"), offsetMap + room.Key * tileSize / 2, Color.White);
+                                        break;
+                                    //add more cases later!
+                                }
+                                if (room.Value.GetHashCode() % 5 == 0)
+                                    map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomKey"), offsetMap + room.Key * tileSize / 2, Color.White);
+                                if (room.Value.GetHashCode() % 4 == 0)
+                                    map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomBomb"), offsetMap + room.Key * tileSize / 2, Color.White);
+                                if (room.Value.GetHashCode() % 6 == 0)
+                                    map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomMoney"), offsetMap + room.Key * tileSize / 2, Color.White);
+                                if (room.Value.GetHashCode() % 7 == 0)
+                                    map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomChest"), offsetMap + room.Key * tileSize / 2, Color.White);
+                            }
                     }
                 }
 
