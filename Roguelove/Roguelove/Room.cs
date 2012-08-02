@@ -30,6 +30,8 @@ namespace Roguelove
         public readonly double blockEdgeRate = 0.5;
         public readonly double blockCornerRate = 0.125;
 
+        public readonly double minimumAccessibility = 0.15;
+
         /// <summary>
         /// DO NOT SET
         /// </summary>
@@ -73,7 +75,7 @@ namespace Roguelove
             while (!done)
             {
                 wall = new bool[tilesWidth, tilesHeight];
-                
+
                 //Outline
                 for (int x = 0; x < tilesWidth; x++)
                 {
@@ -156,17 +158,29 @@ namespace Roguelove
                 }
 
                 //Check if everything pwns
-                done = true;
-                if (left != null && !visited[0, tilesHeight / 2]) done = false;
-                if (up != null && !visited[tilesWidth / 2, 0]) done = false;
-                if (right != null && !visited[tilesWidth - 1, tilesHeight / 2]) done = false;
-                if (down != null && !visited[tilesWidth / 2, tilesHeight - 1]) done = false;
+                int openDoors = 0;
+                if (left != null) openDoors++;
+                if (up != null) openDoors++;
+                if (right != null) openDoors++;
+                if (down != null) openDoors++;
+                if (openDoors == 1)
+                {
+                    int accessibleTiles = 0;
 
-                //bool debugLeft = visited[0, tilesHeight / 2];
-                //bool debugUp = visited[tilesWidth / 2, 0];
-                //bool debugRight = visited[tilesWidth - 1, tilesHeight / 2];
-                //bool debugDown = visited[tilesWidth / 2, tilesHeight - 1];
-                //done = true;
+                    foreach (bool tileVisited in visited) if (tileVisited) accessibleTiles++;
+
+                    double accessability = (double)accessibleTiles / (double)(tilesWidth*tilesHeight);
+
+                    done = (accessability >= minimumAccessibility);
+                }
+                else
+                {
+                    done = true;
+                    if (left != null && !visited[0, tilesHeight / 2]) done = false;
+                    if (up != null && !visited[tilesWidth / 2, 0]) done = false;
+                    if (right != null && !visited[tilesWidth - 1, tilesHeight / 2]) done = false;
+                    if (down != null && !visited[tilesWidth / 2, tilesHeight - 1]) done = false;
+                }
             }
 
 
