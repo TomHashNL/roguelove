@@ -73,6 +73,11 @@ namespace Roguelove
 
                 bool roomBoss = false;
                 Room roomStart = null;
+
+                var roomsArray = rooms.ToArray();
+                roomStart = roomsArray[random.Next(roomsArray.Length)].Value;
+                roomStart.roomType = RoomType.Start;
+
                 foreach (var room in rooms)
                 {
                     int doors = 0;
@@ -85,17 +90,12 @@ namespace Roguelove
                     if (rooms.TryGetValue(room.Key + Vector2.UnitY, out room.Value.down))
                         doors++;
                     if (room.Value.roomType == RoomType.Enemy)
-                        if (roomStart == null)
-                        {
-                            room.Value.roomType = RoomType.Start;
-                            roomStart = room.Value;
-                        }
-                        else if (doors == 1 && !roomBoss)
+                        if (doors == 1 && !roomBoss)
                         {
                             room.Value.roomType = RoomType.Boss;
                             roomBoss = true;
                         }
-                    //else if ()//for other types of rooms
+                        //else if ()//for other types of rooms
                 }
 
                 //continue!!!! ;D
@@ -132,9 +132,9 @@ namespace Roguelove
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 game.Exit();
-
+            
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
-                RoomChange(Generate(10));
+                FloorAdvance();
 
             room.Update();
         }
