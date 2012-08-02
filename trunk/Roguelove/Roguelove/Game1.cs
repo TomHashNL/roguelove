@@ -41,7 +41,7 @@ namespace Roguelove
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            IsFixedTimeStep = false;
+            //IsFixedTimeStep = false;
             graphics.SynchronizeWithVerticalRetrace = false;
 
 #if !DEBUG

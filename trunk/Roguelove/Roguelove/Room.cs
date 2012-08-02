@@ -406,14 +406,17 @@ namespace Roguelove
                                         break;
                                     //add more cases later!
                                 }
-                                if (room.Value.GetHashCode() % 5 == 0)
-                                    map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomKey"), offsetMap + room.Key * tileSize / 2, Color.White);
-                                if (room.Value.GetHashCode() % 4 == 0)
-                                    map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomBomb"), offsetMap + room.Key * tileSize / 2, Color.White);
-                                if (room.Value.GetHashCode() % 6 == 0)
-                                    map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomMoney"), offsetMap + room.Key * tileSize / 2, Color.White);
-                                if (room.Value.GetHashCode() % 7 == 0)
-                                    map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomChest"), offsetMap + room.Key * tileSize / 2, Color.White);
+                                if (room.Value.visited)
+                                {
+                                    if (room.Value.GetHashCode() % 5 == 0)
+                                        map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomKey"), offsetMap + room.Key * tileSize / 2, Color.White);
+                                    if (room.Value.GetHashCode() % 4 == 0)
+                                        map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomBomb"), offsetMap + room.Key * tileSize / 2, Color.White);
+                                    if (room.Value.GetHashCode() % 6 == 0)
+                                        map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomMoney"), offsetMap + room.Key * tileSize / 2, Color.White);
+                                    if (room.Value.GetHashCode() % 7 == 0)
+                                        map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomChest"), offsetMap + room.Key * tileSize / 2, Color.White);
+                                }
                             }
                     }
                 }

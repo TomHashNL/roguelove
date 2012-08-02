@@ -23,7 +23,7 @@ namespace Roguelove
             this.playersControl = playersControl;
             this.floor = floor;
             
-            RoomChange(Generate(5 + floor * 2));
+            RoomChange(Generate((int)((7 + floor * 2) * (1.0 + .3 * game.random.NextDouble()))));
         }
 
         public Room Generate(int roomsCountTarget)

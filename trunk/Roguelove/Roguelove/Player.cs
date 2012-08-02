@@ -34,26 +34,32 @@ namespace Roguelove
         public override void Update()
         {
             //movement
-            {
-                var playerControlState = playerControl.GetPlayerControlState();
+            var playerControlState = playerControl.GetPlayerControlState();
 
-                velocity += playerControlState.position * 2f;
-                velocity *= .9f;
+            velocity += playerControlState.position * 2f;
+            velocity *= .9f;
 
-                position += velocity;
+            //foreach (var entity in room.entities)
+            //{
+            //    Type type = entity.GetType();
+            //    if (type == typeof(Block) ||
+            //        type == typeof(Hole))
+            //    {
+            //        if ((position - entity.position + new Vector2(32)).Length() < 64)
+            //            velocity *= -1;
+            //    }
 
-                if (playerControlState.fire.LengthSquared() > .3 * .3)
-                    room.Instantiate(new Bullet(room, position, Vector2.Normalize(playerControlState.fire) * 15 + velocity / 2));
-            }
+            //    //if (position + velocity)
+            //}
 
             //check doors!
             {
                 bool changeRoom = false;
                 float distanceSquaredMax = 0;
-                foreach (var playerControl in room.map.playersControl)
-                    if (playerControl.player != null)
+                foreach (var playerControl2 in room.map.playersControl)
+                    if (playerControl2.player != null)
                     {
-                        float distanceSquared = (position - playerControl.player.position).LengthSquared();
+                        float distanceSquared = (position - playerControl2.player.position).LengthSquared();
                         if (distanceSquared > distanceSquaredMax)
                             distanceSquaredMax = distanceSquared;
                     }
@@ -105,6 +111,12 @@ namespace Roguelove
                     }
                 }
             }
+
+            //apply physics!
+            position += velocity;
+
+            if (playerControlState.fire.LengthSquared() > .3 * .3)
+                room.Instantiate(new Bullet(room, position, Vector2.Normalize(playerControlState.fire) * 15 + velocity / 2));
         }
     }
 }
