@@ -29,6 +29,7 @@ namespace Roguelove
         public readonly double blockRate = 0.125;
         public readonly double blockEdgeRate = 0.5;
         public readonly double blockCornerRate = 0.125;
+        public readonly double blockHoleRate = 0.0625;
 
         public readonly double minimumAccessibility = 0.15;
 
@@ -68,24 +69,73 @@ namespace Roguelove
 
             //yay go!
             Random rand = new Random();
-            bool[,] wall = new bool[tilesWidth, tilesHeight]; ;
+            Entity[,] grid = new Entity[tilesWidth, tilesHeight];
+
+            switch (roomType)
+            {
+                case(RoomType.Start):
+                case(RoomType.Boss):
+                    grid = GenerateStartRoom(rand);
+                    break;
+                case (RoomType.Enemy):
+                    grid = GenerateEnemyRoom(rand);
+                    break;
+            }
+
+            //Translate into tiles
+            for (int x = 0; x < tilesWidth; x++)
+                for (int y = 0; y < tilesHeight; y++)
+                    if (grid[x, y] != null)
+                        Instantiate(grid[x, y]);
+        }
+
+        //Generate start room
+        private Entity[,] GenerateStartRoom(Random rand)
+        {
+            Entity[,] grid = new Entity[tilesWidth, tilesHeight];
+
+            //Outline
+            for (int x = 0; x < tilesWidth; x++)
+            {
+                grid[x, 0] = new WallBlock(this, new Vector2(x * tileSize, 0));
+                grid[x, tilesHeight - 1] = new WallBlock(this, new Vector2(x * tileSize, (tilesHeight - 1) * tileSize));
+            }
+            for (int y = 0; y < tilesHeight; y++)
+            {
+                grid[0, y] = new WallBlock(this, new Vector2(0, y * tileSize));
+                grid[tilesWidth - 1, y] = new WallBlock(this, new Vector2((tilesWidth - 1) * tileSize, y * tileSize));
+            }
+
+            //Poke door holes in map
+            if (left != null) grid[0, tilesHeight / 2] = null;
+            if (up != null) grid[tilesWidth / 2, 0] = null;
+            if (right != null) grid[tilesWidth - 1, tilesHeight / 2] = null;
+            if (down != null) grid[tilesWidth / 2, tilesHeight - 1] = null;
+
+            //Done
+            return grid;
+        }
+        //Generate enemy room
+        private Entity[,] GenerateEnemyRoom(Random rand)
+        {
+            Entity[,] grid = new Entity[tilesWidth, tilesHeight];
 
             //Main generation loop
             bool done = false;
             while (!done)
             {
-                wall = new bool[tilesWidth, tilesHeight];
+                grid = new Entity[tilesWidth, tilesHeight];
 
                 //Outline
                 for (int x = 0; x < tilesWidth; x++)
                 {
-                    wall[x, 0] = true;
-                    wall[x, tilesHeight - 1] = true;
+                    grid[x, 0] = new WallBlock(this, new Vector2(x * tileSize, 0));
+                    grid[x, tilesHeight - 1] = new WallBlock(this, new Vector2(x * tileSize, (tilesHeight - 1) * tileSize));
                 }
                 for (int y = 0; y < tilesHeight; y++)
                 {
-                    wall[0, y] = true;
-                    wall[tilesWidth - 1, y] = true;
+                    grid[0, y] = new WallBlock(this, new Vector2(0, y * tileSize));
+                    grid[tilesWidth - 1, y] = new WallBlock(this, new Vector2((tilesWidth - 1) * tileSize, y * tileSize));
                 }
 
                 //Random walls
@@ -95,24 +145,57 @@ namespace Roguelove
                     {
                         if (rand.NextDouble() < blockRate)
                         {
-                            wall[x, y] = true;
-                            if (rand.NextDouble() < blockEdgeRate) wall[x - 1, y] = true;
-                            if (rand.NextDouble() < blockEdgeRate) wall[x + 1, y] = true;
-                            if (rand.NextDouble() < blockEdgeRate) wall[x, y - 1] = true;
-                            if (rand.NextDouble() < blockEdgeRate) wall[x, y + 1] = true;
-                            if (rand.NextDouble() < blockCornerRate) wall[x - 1, y - 1] = true;
-                            if (rand.NextDouble() < blockCornerRate) wall[x - 1, y + 1] = true;
-                            if (rand.NextDouble() < blockCornerRate) wall[x + 1, y - 1] = true;
-                            if (rand.NextDouble() < blockCornerRate) wall[x + 1, y + 1] = true;
+                            if (rand.NextDouble() < blockHoleRate)
+                            {
+                                grid[x, y] = new Hole(this, new Vector2(x * tileSize, y * tileSize));
+
+                                if (x != 1 && rand.NextDouble() < blockEdgeRate)
+                                    grid[x - 1, y] = new Hole(this, new Vector2((x - 1) * tileSize, y * tileSize));
+                                if (y != 1 && rand.NextDouble() < blockEdgeRate)
+                                    grid[x, y - 1] = new Hole(this, new Vector2(x * tileSize, (y - 1) * tileSize));
+                                if (x != tilesWidth - 2 && rand.NextDouble() < blockEdgeRate)
+                                    grid[x + 1, y] = new Hole(this, new Vector2((x + 1) * tileSize, y * tileSize));
+                                if (y != tilesHeight - 2 && rand.NextDouble() < blockEdgeRate)
+                                    grid[x, y + 1] = new Hole(this, new Vector2(x * tileSize, (y + 1) * tileSize));
+                                if (x != 1 && y != 1 && rand.NextDouble() < blockCornerRate)
+                                    grid[x - 1, y - 1] = new Hole(this, new Vector2((x - 1) * tileSize, (y - 1) * tileSize));
+                                if (x != 1 && y != tilesHeight - 2 && rand.NextDouble() < blockCornerRate)
+                                    grid[x - 1, y + 1] = new Hole(this, new Vector2((x - 1) * tileSize, (y + 1) * tileSize));
+                                if (x != tilesWidth - 2 && y != 1 && rand.NextDouble() < blockCornerRate)
+                                    grid[x + 1, y - 1] = new Hole(this, new Vector2((x + 1) * tileSize, (y - 1) * tileSize));
+                                if (x != tilesWidth - 2 && y != tilesHeight - 2 && rand.NextDouble() < blockCornerRate)
+                                    grid[x + 1, y + 1] = new Hole(this, new Vector2((x + 1) * tileSize, (y + 1) * tileSize));
+                            }
+                            else
+                            {
+                                grid[x, y] = new Block(this, new Vector2(x * tileSize, y * tileSize));
+
+                                if (x != 1 && rand.NextDouble() < blockEdgeRate)
+                                    grid[x - 1, y] = new Block(this, new Vector2((x - 1) * tileSize, y * tileSize));
+                                if (y != 1 && rand.NextDouble() < blockEdgeRate)
+                                    grid[x, y - 1] = new Block(this, new Vector2(x * tileSize, (y - 1) * tileSize));
+                                if (x != tilesWidth - 2 && rand.NextDouble() < blockEdgeRate)
+                                    grid[x + 1, y] = new Block(this, new Vector2((x + 1) * tileSize, y * tileSize));
+                                if (y != tilesHeight - 2 && rand.NextDouble() < blockEdgeRate)
+                                    grid[x, y + 1] = new Block(this, new Vector2(x * tileSize, (y + 1) * tileSize));
+                                if (x != 1 && y != 1 && rand.NextDouble() < blockCornerRate)
+                                    grid[x - 1, y - 1] = new Block(this, new Vector2((x - 1) * tileSize, (y - 1) * tileSize));
+                                if (x != 1 && y != tilesHeight - 2 && rand.NextDouble() < blockCornerRate)
+                                    grid[x - 1, y + 1] = new Block(this, new Vector2((x - 1) * tileSize, (y + 1) * tileSize));
+                                if (x != tilesWidth - 2 && y != 1 && rand.NextDouble() < blockCornerRate)
+                                    grid[x + 1, y - 1] = new Block(this, new Vector2((x + 1) * tileSize, (y - 1) * tileSize));
+                                if (x != tilesWidth - 2 && y != tilesHeight - 2 && rand.NextDouble() < blockCornerRate)
+                                    grid[x + 1, y + 1] = new Block(this, new Vector2((x + 1) * tileSize, (y + 1) * tileSize));
+                            }
                         }
                     }
                 }
 
                 //Poke door holes in map
-                if (left != null) wall[0, tilesHeight / 2] = false;
-                if (up != null) wall[tilesWidth / 2, 0] = false;
-                if (right != null) wall[tilesWidth - 1, tilesHeight / 2] = false;
-                if (down != null) wall[tilesWidth / 2, tilesHeight - 1] = false;
+                if (left != null) grid[0, tilesHeight / 2] = null;
+                if (up != null) grid[tilesWidth / 2, 0] = null;
+                if (right != null) grid[tilesWidth - 1, tilesHeight / 2] = null;
+                if (down != null) grid[tilesWidth / 2, tilesHeight - 1] = null;
 
                 //Check if accessible between open doors
                 bool[,] visited = new bool[tilesWidth, tilesHeight];
@@ -121,7 +204,7 @@ namespace Roguelove
                 Point startPoint;
                 if (left != null) startPoint = new Point(0, tilesHeight / 2);
                 else if (up != null) startPoint = new Point(tilesWidth / 2, 0);
-                else if (right != null) startPoint = new Point(tilesWidth / 2, tilesHeight / 2);
+                else if (right != null) startPoint = new Point(tilesWidth - 1, tilesHeight / 2);
                 else if (down != null) startPoint = new Point(tilesWidth / 2, tilesHeight - 1);
                 else throw new Exception("Failed to generate map, no open doors, derp :3");
 
@@ -141,7 +224,7 @@ namespace Roguelove
                         bool endPoint = true;
                         foreach (Point p in points)
                         {
-                            if (p.X >= 0 && p.Y >= 0 && p.X < tilesWidth && p.Y < tilesHeight && !visited[p.X, p.Y] && !wall[p.X, p.Y])
+                            if (p.X >= 0 && p.Y >= 0 && p.X < tilesWidth && p.Y < tilesHeight && !visited[p.X, p.Y] && grid[p.X, p.Y] == null)
                             {
                                 newPoints.Add(new Point(p.X, p.Y));
                                 visited[p.X, p.Y] = true;
@@ -169,7 +252,7 @@ namespace Roguelove
 
                     foreach (bool tileVisited in visited) if (tileVisited) accessibleTiles++;
 
-                    double accessability = (double)accessibleTiles / (double)(tilesWidth*tilesHeight);
+                    double accessability = (double)accessibleTiles / (double)(tilesWidth * tilesHeight);
 
                     done = (accessability >= minimumAccessibility);
                 }
@@ -182,13 +265,7 @@ namespace Roguelove
                     if (down != null && !visited[tilesWidth / 2, tilesHeight - 1]) done = false;
                 }
             }
-
-
-            //Translate into tiles
-            for (int x = 0; x < tilesWidth; x++)
-                for (int y = 0; y < tilesHeight; y++)
-                    if (wall[x, y])
-                        Instantiate(new Block(this, new Vector2(x * tileSize, y * tileSize)));
+            return grid;
         }
 
         public void Update()

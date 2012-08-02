@@ -111,6 +111,7 @@
     <Compile Include="Bullet.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="GameState.cs" />
+    <Compile Include="Hole.cs" />
     <Compile Include="InputType.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Player.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="Game1.cs" />
     <Compile Include="Room.cs" />
     <Compile Include="RoomType.cs" />
+    <Compile Include="WallBlock.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
