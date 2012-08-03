@@ -1,4 +1,5 @@
-﻿-all kinds of shit being able to go out of the room
+﻿-collision standardize!
+-all kinds of shit being able to go out of the room
 
 -enemies
 -health/bombs/keys/money
