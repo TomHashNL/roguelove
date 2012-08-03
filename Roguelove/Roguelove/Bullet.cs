@@ -29,7 +29,12 @@ namespace Roguelove
 
         public override void Update()
         {
-            if (Collide(new HashSet<Type>(new[] { typeof(Block), typeof(WallBlock), }), false).Count > 0)
+            if (Collide(new HashSet<Type>(new[]
+            {
+                typeof(Block),
+                typeof(WallBlock),
+                typeof(IDoor),
+            }), false).Count > 0)
                 Destroy();
 
             position += velocity;

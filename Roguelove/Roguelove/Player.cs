@@ -115,6 +115,8 @@ namespace Roguelove
             Collide(new HashSet<Type>(new[]
             {
                 typeof(ISolid),
+                typeof(Door),
+                typeof(LockedDoor),
             }), true);
 
             position += velocity;

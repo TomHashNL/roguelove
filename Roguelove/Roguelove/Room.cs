@@ -88,12 +88,16 @@ namespace Roguelove
             switch (roomType)
             {
                 case (RoomType.Start):
-                case (RoomType.Boss):
                     grid = GenerateStartRoom(random);
+                    break;
+                case (RoomType.Boss):
+                    grid = GenerateBossRoom(random);
                     break;
                 case (RoomType.Enemy):
                     grid = GenerateEnemyRoom(random);
                     break;
+                default:
+                    throw new NotImplementedException("RoomType not implemented yet!");
             }
 
             //Translate into tiles
@@ -103,8 +107,24 @@ namespace Roguelove
                         Instantiate(grid[x, y]);
         }
 
-        //Generate start room
-        private Entity[,] GenerateStartRoom(Random random)
+        //generate start room
+        Entity[,] GenerateStartRoom(Random random)
+        {
+            return GenerateDefaultRoom(random);
+
+            //blargh instructions in here ;D
+        }
+
+        //generate boss room
+        Entity[,] GenerateBossRoom(Random random)
+        {
+            return GenerateDefaultRoom(random);
+
+            //blargh boss here ;D
+        }
+
+        //Generate default room
+        private Entity[,] GenerateDefaultRoom(Random random)
         {
             Entity[,] grid = new Entity[tilesWidth, tilesHeight];
 
@@ -121,10 +141,10 @@ namespace Roguelove
             }
 
             //Poke door holes in map
-            if (left != null) grid[0, tilesHeight / 2] = null;
-            if (up != null) grid[tilesWidth / 2, 0] = null;
-            if (right != null) grid[tilesWidth - 1, tilesHeight / 2] = null;
-            if (down != null) grid[tilesWidth / 2, tilesHeight - 1] = null;
+            if (left != null) grid[0, tilesHeight / 2] = new Door(this, new Vector2(0, tilesHeight / 2 * tileSize));
+            if (up != null) grid[tilesWidth / 2, 0] = new Door(this, new Vector2(tilesWidth / 2 * tileSize, 0));
+            if (right != null) grid[tilesWidth - 1, tilesHeight / 2] = new Door(this, new Vector2((tilesWidth - 1) * tileSize, tilesHeight / 2 * tileSize));
+            if (down != null) grid[tilesWidth / 2, tilesHeight - 1] = new Door(this, new Vector2(tilesWidth  / 2 * tileSize, (tilesHeight - 1) * tileSize)); ;
 
             //Done
             return grid;
@@ -132,25 +152,13 @@ namespace Roguelove
         //Generate enemy room
         private Entity[,] GenerateEnemyRoom(Random random)
         {
-            Entity[,] grid = new Entity[tilesWidth, tilesHeight];
+            Entity[,] grid = null;
 
             //Main generation loop
             bool done = false;
             while (!done)
             {
-                grid = new Entity[tilesWidth, tilesHeight];
-
-                //Outline
-                for (int x = 0; x < tilesWidth; x++)
-                {
-                    grid[x, 0] = new WallBlock(this, new Vector2(x * tileSize, 0));
-                    grid[x, tilesHeight - 1] = new WallBlock(this, new Vector2(x * tileSize, (tilesHeight - 1) * tileSize));
-                }
-                for (int y = 0; y < tilesHeight; y++)
-                {
-                    grid[0, y] = new WallBlock(this, new Vector2(0, y * tileSize));
-                    grid[tilesWidth - 1, y] = new WallBlock(this, new Vector2((tilesWidth - 1) * tileSize, y * tileSize));
-                }
+                grid = GenerateDefaultRoom(random);
 
                 //Random walls
                 for (int x = 1; x < tilesWidth - 2; x++)
@@ -230,12 +238,6 @@ namespace Roguelove
                     }
                 }
 
-                //Poke door holes in map
-                if (left != null) grid[0, tilesHeight / 2] = null;
-                if (up != null) grid[tilesWidth / 2, 0] = null;
-                if (right != null) grid[tilesWidth - 1, tilesHeight / 2] = null;
-                if (down != null) grid[tilesWidth / 2, tilesHeight - 1] = null;
-
                 //Check if accessible between open doors
                 bool[,] visited = new bool[tilesWidth, tilesHeight];
                 List<Point> newPoints = new List<Point>();
@@ -263,7 +265,7 @@ namespace Roguelove
                         bool endPoint = true;
                         foreach (Point p in points)
                         {
-                            if (p.X >= 0 && p.Y >= 0 && p.X < tilesWidth && p.Y < tilesHeight && !visited[p.X, p.Y] && grid[p.X, p.Y] == null)
+                            if (p.X >= 0 && p.Y >= 0 && p.X < tilesWidth && p.Y < tilesHeight && !visited[p.X, p.Y] && (grid[p.X, p.Y] == null || grid[p.X, p.Y] is IDoor))
                             {
                                 newPoints.Add(new Point(p.X, p.Y));
                                 visited[p.X, p.Y] = true;
