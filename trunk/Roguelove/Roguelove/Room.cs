@@ -144,7 +144,7 @@ namespace Roguelove
             if (left != null) grid[0, tilesHeight / 2] = new Door(this, new Vector2(0, tilesHeight / 2 * tileSize));
             if (up != null) grid[tilesWidth / 2, 0] = new Door(this, new Vector2(tilesWidth / 2 * tileSize, 0));
             if (right != null) grid[tilesWidth - 1, tilesHeight / 2] = new Door(this, new Vector2((tilesWidth - 1) * tileSize, tilesHeight / 2 * tileSize));
-            if (down != null) grid[tilesWidth / 2, tilesHeight - 1] = new Door(this, new Vector2(tilesWidth  / 2 * tileSize, (tilesHeight - 1) * tileSize)); ;
+            if (down != null) grid[tilesWidth / 2, tilesHeight - 1] = new Door(this, new Vector2(tilesWidth / 2 * tileSize, (tilesHeight - 1) * tileSize)); ;
 
             //Done
             return grid;
@@ -286,19 +286,37 @@ namespace Roguelove
                 {
                     List<Point> randomPlaces = new List<Point>();
                     for (int x = 1; x < tilesWidth - 2; x++)
-                        for (int y = 1; y < tilesHeight - 2; y++) 
-                            if (!visited[x, y] && grid[x,y]==null) randomPlaces.Add(new Point(x, y));
+                        for (int y = 1; y < tilesHeight - 2; y++)
+                            if (!visited[x, y] && grid[x, y] == null) randomPlaces.Add(new Point(x, y));
 
                     if (randomPlaces.Count != 0)
                     {
                         Point point = randomPlaces[random.Next(randomPlaces.Count - 1)];
-                        if(random.NextDouble() < chestLockedRate)
-                            grid[point.X, point.Y] = new LockedChest(this, new Vector2((point.X+.5f) * tileSize, (point.Y+.5f) * tileSize));
+                        if (random.NextDouble() < chestLockedRate)
+                            grid[point.X, point.Y] = new LockedChest(this, new Vector2((point.X + .5f) * tileSize, (point.Y + .5f) * tileSize));
                         else
-                            grid[point.X, point.Y] = new Chest(this, new Vector2((point.X+.5f) * tileSize, (point.Y+.5f) * tileSize));
+                            grid[point.X, point.Y] = new Chest(this, new Vector2((point.X + .5f) * tileSize, (point.Y + .5f) * tileSize));
                     }
                 }
 
+                //Spawn some mobs?!
+                List<Point> potentialPlaces = new List<Point>();
+                for (int x = 1; x < tilesWidth - 2; x++)
+                    for (int y = 1; y < tilesHeight - 2; y++)
+                        if (visited[x, y] && grid[x, y] == null)
+                        {
+                            if (Vector2.Distance(new Vector2(x, y), new Vector2(0, tilesHeight / 2)) > 4)
+                                if (Vector2.Distance(new Vector2(x, y), new Vector2(tilesWidth / 2, 0)) > 4)
+                                    if (Vector2.Distance(new Vector2(x, y), new Vector2(tilesWidth - 1, tilesHeight / 2)) > 4)
+                                        if (Vector2.Distance(new Vector2(x, y), new Vector2(tilesWidth / 2, tilesHeight - 1)) > 4)
+                                            potentialPlaces.Add(new Point(x, y));
+                        }
+
+                if (potentialPlaces.Count != 0)
+                {
+                    Point spawnPoint = potentialPlaces[random.Next(potentialPlaces.Count() - 1)];
+                    grid[spawnPoint.X, spawnPoint.Y] = new Blob(this, new Vector2(spawnPoint.X * tileSize, spawnPoint.Y * tileSize) + new Vector2(tileSize / 2));
+                }
 
                 //Check if everything pwns
                 int openDoors = 0;

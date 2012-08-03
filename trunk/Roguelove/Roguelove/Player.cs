@@ -124,7 +124,7 @@ namespace Roguelove
             if (playerControlState.fire.LengthSquared() > .3 * .3)
                 if (shot == 0)
                 {
-                    room.Instantiate(new Bullet(room, position, Vector2.Normalize(playerControlState.fire) * 15 + velocity / 2));
+                    room.Instantiate(new Bullet(room, position, Vector2.Normalize(playerControlState.fire) * 15 + velocity / 2, playerControl.damage));
                     shot = 10;
                 }
         }
