@@ -141,10 +141,10 @@ namespace Roguelove
             }
 
             //Poke door holes in map
-            if (left != null) grid[0, tilesHeight / 2] = new Door(this, new Vector2(0, tilesHeight / 2 * tileSize));
-            if (up != null) grid[tilesWidth / 2, 0] = new Door(this, new Vector2(tilesWidth / 2 * tileSize, 0));
-            if (right != null) grid[tilesWidth - 1, tilesHeight / 2] = new Door(this, new Vector2((tilesWidth - 1) * tileSize, tilesHeight / 2 * tileSize));
-            if (down != null) grid[tilesWidth / 2, tilesHeight - 1] = new Door(this, new Vector2(tilesWidth / 2 * tileSize, (tilesHeight - 1) * tileSize)); ;
+            if (left != null) grid[0, tilesHeight / 2] = new Door(this, new Vector2(0, tilesHeight / 2 * tileSize), 0.0f * (float)Math.PI);
+            if (up != null) grid[tilesWidth / 2, 0] = new Door(this, new Vector2(tilesWidth / 2 * tileSize, 0), 0.5f * (float)Math.PI);
+            if (right != null) grid[tilesWidth - 1, tilesHeight / 2] = new Door(this, new Vector2((tilesWidth - 1) * tileSize, tilesHeight / 2 * tileSize), 1.0f * (float)Math.PI);
+            if (down != null) grid[tilesWidth / 2, tilesHeight - 1] = new Door(this, new Vector2(tilesWidth / 2 * tileSize, (tilesHeight - 1) * tileSize), 1.5f * (float)Math.PI);
 
             //Done
             return grid;
@@ -417,6 +417,30 @@ namespace Roguelove
                 map.game.spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, matrix);
 
                 map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("hud"), Vector2.Zero, Color.White);
+
+                //draw HUDS
+                int hudPlayerWidth = 200;
+                Vector2[] hudPlayerOffsets = new[]
+                {
+                    new Vector2(0, 0),
+                    new Vector2(hudPlayerWidth, 0),
+                    new Vector2(viewWidth - hudPlayerWidth * 2, 0),
+                    new Vector2(viewWidth - hudPlayerWidth, 0),
+                };
+                SpriteFont spriteFont = map.game.Content.Load<SpriteFont>("font");
+                foreach (var playerControl in map.playersControl)
+                {
+                    Vector2 hudPlayerOffset = hudPlayerOffsets[playerControl.index];
+
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.Append("lifeMax: ").Append(playerControl.lifeMax).Append("\r\n");
+                    stringBuilder.Append("life: ").Append(playerControl.life).Append("\r\n");
+                    stringBuilder.Append("money: ").Append(playerControl.money).Append("\r\n");
+                    stringBuilder.Append("bombs: ").Append(playerControl.bombs).Append("\r\n");
+                    stringBuilder.Append("keys: ").Append(playerControl.keys).Append("\r\n");
+
+                    map.game.spriteBatch.DrawString(spriteFont, stringBuilder.ToString(), hudPlayerOffset + new Vector2(20), Color.White);
+                }
 
                 //draw rooms
                 //map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("block"), new Rectangle(0, 0, viewWidth, HUDheight), Color.Red);

@@ -133,11 +133,13 @@ namespace Roguelove
         /// <param name="velocity"></param>
         public void RoomChange(Room room, Vector2 position)
         {
-            //remove previous players =O
+            //remove previous players/bombs/bullets =O
             if (this.room != null)
-                foreach (var playerControl in playersControl)
-                    if (playerControl.player != null)
-                        playerControl.player.Destroy();
+                foreach (var entity in room.entities)
+                    if (entity is Player ||
+                        entity is Bomb ||
+                        entity is Bullet)
+                        entity.Destroy();
 
             //set new room!
             this.room = room;

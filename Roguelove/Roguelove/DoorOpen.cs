@@ -9,22 +9,29 @@ namespace Roguelove
 {
     public class DoorOpen : Entity, IDoor
     {
-        public DoorOpen(Room room, Vector2 position)
+        public DoorOpen(Room room, Vector2 position, float rotation)
             : base(room)
         {
             this.position = position;
+            this.rotation = rotation;
             this.texture = room.map.game.Content.Load<Texture2D>("doorOpen");
         }
 
         protected override void OnDestroy()
         {
-            room.Instantiate(new Door(room, position));
+            room.Instantiate(new Door(room, position, rotation));
         }
 
         public override void Update()
         {
             if (room.entities.Count(e => e is Enemy) > 0)
                 Destroy();
+        }
+
+        public override void Draw()
+        {
+            Vector2 origin = new Vector2(texture.Width, texture.Height) / 2;
+            room.map.game.spriteBatch.Draw(texture, position + origin, sourceRectangle, color, rotation, origin, scale, spriteEffects, layerDepth);
         }
     }
 }

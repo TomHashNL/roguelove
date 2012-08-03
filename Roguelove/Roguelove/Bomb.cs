@@ -77,11 +77,12 @@ namespace Roguelove
 
                                 //Fill holes
                                 Vector2 gridPos = new Vector2((int)((position.X)/room.tileSize)*room.tileSize, (int)((position.Y)/room.tileSize)*room.tileSize);
+                                
                                 Vector2 delta = entity.position - gridPos;
-                                if(delta.Length()==room.tileSize)
+                                if (delta.Length() == room.tileSize)
                                 {
                                     var hole = room.entities.FirstOrDefault(e => e.position == entity.position + delta && e is Hole);
-                                    if(hole!=null)
+                                    if (hole != null)
                                         hole.Destroy();
                                     //TODO: add rubble effect
                                 }
