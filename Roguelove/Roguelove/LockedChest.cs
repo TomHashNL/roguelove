@@ -7,14 +7,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Roguelove
 {
-    public class Chest : Entity
+    public class LockedChest : Entity
     {
         bool open;
 
-        public Chest(Room room, Vector2 position)
+        public LockedChest(Room room, Vector2 position)
             : base(room)
         {
-            texture = room.map.game.Content.Load<Texture2D>("chest");
+            texture = room.map.game.Content.Load<Texture2D>("lockedChest");
             this.position = position;
             this.origin = new Vector2(texture.Width, texture.Height) / 2;
         }
@@ -31,8 +31,15 @@ namespace Roguelove
             var collisions = Collide(new HashSet<Type>(new[] { typeof(Player), typeof(Chest), typeof(LockedChest), typeof(Block), typeof(WallBlock), typeof(Hole), typeof(Bomb), }), true);
             if (!open)
                 foreach (var entity in collisions)
-                    if (entity.GetType() == typeof(Player))
-                        Open(entity as Player);
+                {
+                    var player = entity as Player;
+                    if (player != null)
+                        if (player.playerControl.keys > 0)
+                        {
+                            player.playerControl.keys--;
+                            Open(player);
+                        }
+                }
 
             position += velocity;
         }
@@ -40,7 +47,7 @@ namespace Roguelove
         private void Open(Player player)
         {
             open = true;
-            texture = room.map.game.Content.Load<Texture2D>("chestOpen");
+            texture = room.map.game.Content.Load<Texture2D>("lockedChestOpen");
 
             //instantiate shit ;D
         }
