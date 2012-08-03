@@ -38,6 +38,7 @@ namespace Roguelove
         public readonly int maxHoleBruteForceTries = 100;
 
         public readonly double chestRate = 0.25;
+        public readonly double chestLockedRate = 0.25;
 
         public readonly double minimumAccessibility = 0.25;
 
@@ -289,7 +290,10 @@ namespace Roguelove
                     if (randomPlaces.Count != 0)
                     {
                         Point point = randomPlaces[random.Next(randomPlaces.Count - 1)];
-                        grid[point.X, point.Y] = new Chest(this, new Vector2(point.X * tileSize, point.Y * tileSize));
+                        if(random.NextDouble() < chestLockedRate)
+                            grid[point.X, point.Y] = new LockedChest(this, new Vector2((point.X+.5f) * tileSize, (point.Y+.5f) * tileSize));
+                        else
+                            grid[point.X, point.Y] = new Chest(this, new Vector2((point.X+.5f) * tileSize, (point.Y+.5f) * tileSize));
                     }
                 }
 
