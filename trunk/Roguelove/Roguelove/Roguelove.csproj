@@ -116,6 +116,8 @@
     <Compile Include="Enemy.cs" />
     <Compile Include="IDoor.cs" />
     <Compile Include="ISolid.cs" />
+    <Compile Include="Item.cs" />
+    <Compile Include="ItemMoney.cs" />
     <Compile Include="LockedChest.cs" />
     <Compile Include="Chest.cs" />
     <Compile Include="Entity.cs" />
