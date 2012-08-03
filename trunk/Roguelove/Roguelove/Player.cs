@@ -15,7 +15,7 @@ namespace Roguelove
         public PlayerControl playerControl;
         PlayerControlState playerControlState;
         PlayerControlState playerControlStatePrevious;
-        int frame;
+        int shot;
 
         public Player(Room room, PlayerControl playerControl, Vector2 position, Vector2 velocity)
             : base(room)
@@ -37,7 +37,8 @@ namespace Roguelove
 
         public override void Update()
         {
-            frame++;
+            if (shot > 0)
+                shot--;
 
             //movement
             playerControlStatePrevious = playerControlState;
@@ -48,7 +49,7 @@ namespace Roguelove
 
             if (playerControlState.bomb)
                 if (!playerControlStatePrevious.bomb)
-                    room.Instantiate(new Bomb(room, position) { velocity = velocity, });
+                    room.Instantiate(new Bomb(room, position));
 
             //check doors!
             {
@@ -118,13 +119,17 @@ namespace Roguelove
                 typeof(Hole),
                 typeof(Player),
                 typeof(Bomb),
+                typeof(Chest),
             }), true);
 
             position += velocity;
 
             if (playerControlState.fire.LengthSquared() > .3 * .3)
-                if (frame % 10 == 0)
+                if (shot == 0)
+                {
                     room.Instantiate(new Bullet(room, position, Vector2.Normalize(playerControlState.fire) * 15 + velocity / 2));
+                    shot = 10;
+                }
         }
     }
 }
