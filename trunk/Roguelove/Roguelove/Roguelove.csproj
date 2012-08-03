@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="Block.cs" />
     <Compile Include="Bullet.cs" />
+    <Compile Include="Chest.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="Hole.cs" />

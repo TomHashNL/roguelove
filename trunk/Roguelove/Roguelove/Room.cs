@@ -29,9 +29,17 @@ namespace Roguelove
         public readonly double blockRate = 0.125;
         public readonly double blockEdgeRate = 0.5;
         public readonly double blockCornerRate = 0.125;
-        public readonly double blockHoleRate = 0.0625;
 
-        public readonly double minimumAccessibility = 0.15;
+        public readonly double blockHoleRate = 0.015625;
+        public readonly double holeEdgeRate = 0.5;
+        public readonly double holeCornerRate = 0.125;
+        public readonly int minHoleSpreadCount = 4;
+        public readonly int maxHoleSpreadCount = 20;
+        public readonly int maxHoleBruteForceTries = 100;
+
+        public readonly double chestRate = 0.25;
+
+        public readonly double minimumAccessibility = 0.25;
 
         /// <summary>
         /// DO NOT SET
@@ -74,8 +82,8 @@ namespace Roguelove
 
             switch (roomType)
             {
-                case(RoomType.Start):
-                case(RoomType.Boss):
+                case (RoomType.Start):
+                case (RoomType.Boss):
                     grid = GenerateStartRoom(random);
                     break;
                 case (RoomType.Enemy):
@@ -140,9 +148,9 @@ namespace Roguelove
                 }
 
                 //Random walls
-                for (int x = 1; x < tilesWidth - 1; x++)
+                for (int x = 1; x < tilesWidth - 2; x++)
                 {
-                    for (int y = 1; y < tilesHeight - 1; y++)
+                    for (int y = 1; y < tilesHeight - 2; y++)
                     {
                         if (random.NextDouble() < blockRate)
                         {
@@ -150,43 +158,68 @@ namespace Roguelove
                             {
                                 grid[x, y] = new Hole(this, new Vector2(x * tileSize, y * tileSize));
 
-                                if (x != 1 && random.NextDouble() < blockEdgeRate)
-                                    grid[x - 1, y] = new Hole(this, new Vector2((x - 1) * tileSize, y * tileSize));
-                                if (y != 1 && random.NextDouble() < blockEdgeRate)
-                                    grid[x, y - 1] = new Hole(this, new Vector2(x * tileSize, (y - 1) * tileSize));
-                                if (x != tilesWidth - 2 && random.NextDouble() < blockEdgeRate)
-                                    grid[x + 1, y] = new Hole(this, new Vector2((x + 1) * tileSize, y * tileSize));
-                                if (y != tilesHeight - 2 && random.NextDouble() < blockEdgeRate)
-                                    grid[x, y + 1] = new Hole(this, new Vector2(x * tileSize, (y + 1) * tileSize));
-                                if (x != 1 && y != 1 && random.NextDouble() < blockCornerRate)
-                                    grid[x - 1, y - 1] = new Hole(this, new Vector2((x - 1) * tileSize, (y - 1) * tileSize));
-                                if (x != 1 && y != tilesHeight - 2 && random.NextDouble() < blockCornerRate)
-                                    grid[x - 1, y + 1] = new Hole(this, new Vector2((x - 1) * tileSize, (y + 1) * tileSize));
-                                if (x != tilesWidth - 2 && y != 1 && random.NextDouble() < blockCornerRate)
-                                    grid[x + 1, y - 1] = new Hole(this, new Vector2((x + 1) * tileSize, (y - 1) * tileSize));
-                                if (x != tilesWidth - 2 && y != tilesHeight - 2 && random.NextDouble() < blockCornerRate)
-                                    grid[x + 1, y + 1] = new Hole(this, new Vector2((x + 1) * tileSize, (y + 1) * tileSize));
+                                int wantedHoles = random.Next(minHoleSpreadCount, maxHoleSpreadCount);
+
+                                int holeX = x;
+                                int holeY = y;
+                                for (int i = 0; i < wantedHoles; i++)
+                                {
+                                    int prevX = holeX;
+                                    int prevY = holeY;
+                                    int dir = random.Next(0, 4);
+
+                                    if (dir == 1 && holeX > 1)
+                                        holeX--;
+                                    if (dir == 2 && holeY > 1)
+                                        holeY--;
+                                    if (dir == 3 && holeX < tilesWidth - 2)
+                                        holeX++;
+                                    if (dir == 4 && holeY < tilesHeight - 2)
+                                        holeY++;
+
+                                    if (grid[holeX, holeY] == null)
+                                        grid[holeX, holeY] = new Hole(this, new Vector2(holeX * tileSize, holeY * tileSize));
+                                    else
+                                    {
+                                        holeX = prevX;
+                                        holeY = prevY;
+
+                                        wantedHoles++;
+                                        if (wantedHoles > maxHoleSpreadCount + maxHoleBruteForceTries) break;
+                                    }
+
+                                }
                             }
                             else
                             {
-                                grid[x, y] = new Block(this, new Vector2(x * tileSize, y * tileSize));
+                                if (grid[x, y] == null)
+                                {
+                                    grid[x, y] = new Block(this, new Vector2(x * tileSize, y * tileSize));
 
-                                if (x != 1 && random.NextDouble() < blockEdgeRate)
-                                    grid[x - 1, y] = new Block(this, new Vector2((x - 1) * tileSize, y * tileSize));
-                                if (y != 1 && random.NextDouble() < blockEdgeRate)
-                                    grid[x, y - 1] = new Block(this, new Vector2(x * tileSize, (y - 1) * tileSize));
-                                if (x != tilesWidth - 2 && random.NextDouble() < blockEdgeRate)
-                                    grid[x + 1, y] = new Block(this, new Vector2((x + 1) * tileSize, y * tileSize));
-                                if (y != tilesHeight - 2 && random.NextDouble() < blockEdgeRate)
-                                    grid[x, y + 1] = new Block(this, new Vector2(x * tileSize, (y + 1) * tileSize));
-                                if (x != 1 && y != 1 && random.NextDouble() < blockCornerRate)
-                                    grid[x - 1, y - 1] = new Block(this, new Vector2((x - 1) * tileSize, (y - 1) * tileSize));
-                                if (x != 1 && y != tilesHeight - 2 && random.NextDouble() < blockCornerRate)
-                                    grid[x - 1, y + 1] = new Block(this, new Vector2((x - 1) * tileSize, (y + 1) * tileSize));
-                                if (x != tilesWidth - 2 && y != 1 && random.NextDouble() < blockCornerRate)
-                                    grid[x + 1, y - 1] = new Block(this, new Vector2((x + 1) * tileSize, (y - 1) * tileSize));
-                                if (x != tilesWidth - 2 && y != tilesHeight - 2 && random.NextDouble() < blockCornerRate)
-                                    grid[x + 1, y + 1] = new Block(this, new Vector2((x + 1) * tileSize, (y + 1) * tileSize));
+                                    if (x != 1 && grid[x - 1, y] == null && random.NextDouble() < blockEdgeRate)
+                                        grid[x - 1, y] = new Block(this, new Vector2((x - 1) * tileSize, y * tileSize));
+
+                                    if (y != 1 && grid[x, y - 1] == null && random.NextDouble() < blockEdgeRate)
+                                        grid[x, y - 1] = new Block(this, new Vector2(x * tileSize, (y - 1) * tileSize));
+
+                                    if (x != tilesWidth - 2 && grid[x + 1, y] == null && random.NextDouble() < blockEdgeRate)
+                                        grid[x + 1, y] = new Block(this, new Vector2((x + 1) * tileSize, y * tileSize));
+
+                                    if (y != tilesHeight - 2 && grid[x, y + 1] == null && random.NextDouble() < blockEdgeRate)
+                                        grid[x, y + 1] = new Block(this, new Vector2(x * tileSize, (y + 1) * tileSize));
+
+                                    if (x != 1 && y != 1 && grid[x - 1, y - 1] == null && random.NextDouble() < blockCornerRate)
+                                        grid[x - 1, y - 1] = new Block(this, new Vector2((x - 1) * tileSize, (y - 1) * tileSize));
+
+                                    if (x != 1 && y != tilesHeight - 2 && grid[x - 1, y + 1] == null && random.NextDouble() < blockCornerRate)
+                                        grid[x - 1, y + 1] = new Block(this, new Vector2((x - 1) * tileSize, (y + 1) * tileSize));
+
+                                    if (x != tilesWidth - 2 && y != 1 && grid[x + 1, y - 1] == null && random.NextDouble() < blockCornerRate)
+                                        grid[x + 1, y - 1] = new Block(this, new Vector2((x + 1) * tileSize, (y - 1) * tileSize));
+
+                                    if (x != tilesWidth - 2 && y != tilesHeight - 2 && grid[x + 1, y + 1] == null && random.NextDouble() < blockCornerRate)
+                                        grid[x + 1, y + 1] = new Block(this, new Vector2((x + 1) * tileSize, (y + 1) * tileSize));
+                                }
                             }
                         }
                     }
@@ -240,6 +273,22 @@ namespace Roguelove
                         }
                     }
                 }
+
+                //Place chest at an non avalible area
+                if (random.NextDouble() < chestRate)
+                {
+                    List<Point> randomPlaces = new List<Point>();
+                    for (int x = 1; x < tilesWidth - 2; x++)
+                        for (int y = 1; y < tilesHeight - 2; y++) 
+                            if (!visited[x, y] && grid[x,y]==null) randomPlaces.Add(new Point(x, y));
+
+                    if (randomPlaces.Count != 0)
+                    {
+                        Point point = randomPlaces[random.Next(randomPlaces.Count - 1)];
+                        grid[point.X, point.Y] = new Chest(this, new Vector2(point.X * tileSize, point.Y * tileSize));
+                    }
+                }
+
 
                 //Check if everything pwns
                 int openDoors = 0;
