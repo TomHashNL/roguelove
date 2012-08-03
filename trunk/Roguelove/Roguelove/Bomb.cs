@@ -21,12 +21,12 @@ namespace Roguelove
             this.color = new Color(new Vector3(.3f));
             this.collidable = false;
 
-            this.blastRadius = room.tileSize * 2f;
+            this.blastRadius = room.tileSize * 4f;
         }
 
         protected override void OnDestroy()
         {
-            
+
         }
 
         public override void Update()
@@ -51,13 +51,35 @@ namespace Roguelove
             {
                 Destroy();
                 foreach (var entity in room.entities)
-                {
-                    Type type = entity.GetType();
+                    //if (typeof(ISolid).IsAssignableFrom(entity.GetType()))
+                    if (entity is ISolid)
+                    {
+                        float distance = (position - (entity.position + new Vector2(entity.radius))).Length();
+                        if (distance < blastRadius)
+                        {
+                            Vector2 offset = entity.position - position;
+                            if (offset == Vector2.Zero) offset = Vector2.UnitX;
+                            offset.Normalize();
+                            entity.velocity += offset * (blastRadius - distance) / 8;
 
-                    if (type == typeof(Block))
-                        if ((position - (entity.position + new Vector2(entity.radius))).LengthSquared() < blastRadius * blastRadius)
-                            entity.Destroy();
-                }
+                            if (entity is Block && distance < blastRadius / 2)
+                            {
+                                entity.Destroy();
+                                //
+
+                                Vector2 gridPos = new Vector2((int)((position.X)/room.tileSize)*room.tileSize, (int)((position.Y)/room.tileSize)*room.tileSize);
+                                Vector2 delta = entity.position - gridPos;
+                                if(delta.Length()==room.tileSize)
+                                {
+                                    var hole = room.entities.FirstOrDefault(e => e.position == entity.position + delta && e is Hole);
+                                    if(hole!=null)
+                                        hole.Destroy();
+                                    //TODO: add rubble effect
+                                }
+                            }
+
+                        }
+                    }
             }
         }
     }
