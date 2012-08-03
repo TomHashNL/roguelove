@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Roguelove
 {
-    public class WallBlock : Entity
+    public class WallBlock : Entity, ISolid
     {
         public WallBlock(Room room, Vector2 position)
             : base(room)

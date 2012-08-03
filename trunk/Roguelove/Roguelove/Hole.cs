@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Roguelove
 {
-    public class Hole : Entity
+    public class Hole : Entity, ISolid
     {
         public Hole(Room room, Vector2 position)
             : base(room)

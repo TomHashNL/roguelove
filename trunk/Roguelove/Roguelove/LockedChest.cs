@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Roguelove
 {
-    public class LockedChest : Entity
+    public class LockedChest : Entity, ISolid
     {
         bool open;
 
@@ -28,7 +28,7 @@ namespace Roguelove
         {
             velocity *= .9f;
 
-            var collisions = Collide(new HashSet<Type>(new[] { typeof(Player), typeof(Chest), typeof(LockedChest), typeof(Block), typeof(WallBlock), typeof(Hole), typeof(Bomb), }), true);
+            var collisions = Collide(new HashSet<Type>(new[] { typeof(ISolid), }), true);
             if (!open)
                 foreach (var entity in collisions)
                 {

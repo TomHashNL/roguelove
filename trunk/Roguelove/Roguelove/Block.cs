@@ -7,9 +7,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Roguelove
 {
-    public class Block:Entity
+    public class Block : Entity, ISolid
     {
-        public Block(Room room, Vector2 position) : base(room)
+        public Block(Room room, Vector2 position)
+            : base(room)
         {
             texture = room.map.game.Content.Load<Texture2D>("block");
             this.position = position;
@@ -17,12 +18,12 @@ namespace Roguelove
 
         protected override void OnDestroy()
         {
-            
+
         }
 
         public override void Update()
         {
-            
+
         }
     }
 }

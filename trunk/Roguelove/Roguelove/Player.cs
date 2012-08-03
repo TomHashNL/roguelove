@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Roguelove
 {
-    public class Player : Entity
+    public class Player : Entity, ISolid
     {
         /// <summary>
         /// DO NOT SET
@@ -114,13 +114,7 @@ namespace Roguelove
             //apply physics!
             Collide(new HashSet<Type>(new[]
             {
-                typeof(Block),
-                typeof(WallBlock),
-                typeof(Hole),
-                typeof(Player),
-                typeof(Bomb),
-                typeof(Chest),
-                typeof(LockedChest),
+                typeof(ISolid),
             }), true);
 
             position += velocity;

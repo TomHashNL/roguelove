@@ -1,6 +1,4 @@
-﻿-collision standardize!
--all kinds of shit being able to go out of the room
-
+﻿-doors
 -enemies
 -health/bombs/keys/money
 -HUD
