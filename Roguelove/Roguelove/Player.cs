@@ -120,6 +120,7 @@ namespace Roguelove
                 typeof(Player),
                 typeof(Bomb),
                 typeof(Chest),
+                typeof(LockedChest),
             }), true);
 
             position += velocity;
