@@ -13,6 +13,9 @@ namespace Roguelove
         /// DO NOT SET
         /// </summary>
         public PlayerControl playerControl;
+        PlayerControlState playerControlState;
+        PlayerControlState playerControlStatePrevious;
+        int frame;
 
         public Player(Room room, PlayerControl playerControl, Vector2 position, Vector2 velocity)
             : base(room)
@@ -23,6 +26,8 @@ namespace Roguelove
 
             this.texture = room.map.game.Content.Load<Texture2D>("player");
             this.origin = new Vector2(texture.Width, texture.Height) / 2;
+
+            this.radius = 32;
         }
 
         protected override void OnDestroy()
@@ -32,11 +37,18 @@ namespace Roguelove
 
         public override void Update()
         {
+            frame++;
+
             //movement
-            var playerControlState = playerControl.GetPlayerControlState();
+            playerControlStatePrevious = playerControlState;
+            playerControlState = playerControl.GetPlayerControlState();
 
             velocity += playerControlState.position * 2f;
             velocity *= .8f;
+
+            if (playerControlState.bomb)
+                if (!playerControlStatePrevious.bomb)
+                    room.Instantiate(new Bomb(room, position) { velocity = velocity, });
 
             //check doors!
             {
@@ -99,12 +111,20 @@ namespace Roguelove
             }
 
             //apply physics!
-            Collide(new HashSet<Type>(new[] { typeof(Block), typeof(WallBlock), typeof(Hole), typeof(Player), }), true);
+            Collide(new HashSet<Type>(new[]
+            {
+                typeof(Block),
+                typeof(WallBlock),
+                typeof(Hole),
+                typeof(Player),
+                typeof(Bomb),
+            }), true);
 
             position += velocity;
 
             if (playerControlState.fire.LengthSquared() > .3 * .3)
-                room.Instantiate(new Bullet(room, position, Vector2.Normalize(playerControlState.fire) * 15 + velocity / 2));
+                if (frame % 10 == 0)
+                    room.Instantiate(new Bullet(room, position, Vector2.Normalize(playerControlState.fire) * 15 + velocity / 2));
         }
     }
 }

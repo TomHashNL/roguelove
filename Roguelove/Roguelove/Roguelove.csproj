@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Block.cs" />
+    <Compile Include="Bomb.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="Chest.cs" />
     <Compile Include="Entity.cs" />
@@ -128,6 +129,7 @@
   <ItemGroup>
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
+    <Content Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RogueloveContent\RogueloveContent.contentproj">

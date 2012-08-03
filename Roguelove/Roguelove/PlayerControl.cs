@@ -37,6 +37,7 @@ namespace Roguelove
             if (inputType == InputType.Keyboard)
             {
                 var keyboardState = Keyboard.GetState();
+                var mouseState = Mouse.GetState();
 
                 PlayerControlState playerControlState = new PlayerControlState();
                 if (keyboardState.IsKeyDown(Keys.A))
@@ -59,6 +60,15 @@ namespace Roguelove
                     playerControlState.fire.Y -= 1;
                 if (keyboardState.IsKeyDown(Keys.Down))
                     playerControlState.fire.Y += 1;
+
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                    if (player != null)
+                    {
+                        Vector2 offset = new Vector2(mouseState.X, mouseState.Y) - Vector2.Transform(player.position, player.room.matrix);
+                        if (offset == Vector2.Zero)
+                            offset = Vector2.UnitX;
+                        playerControlState.fire += Vector2.Normalize(offset);
+                    }
 
                 playerControlState.item = keyboardState.IsKeyDown(Keys.Space);
                 playerControlState.bomb = keyboardState.IsKeyDown(Keys.E);
@@ -87,7 +97,7 @@ namespace Roguelove
                 }
 
                 var gamePadState = GamePad.GetState(playerIndex, GamePadDeadZone.Circular);
-                
+
                 PlayerControlState playerControlState = new PlayerControlState();
                 playerControlState.position = gamePadState.ThumbSticks.Left;
                 playerControlState.position.Y *= -1;

@@ -19,7 +19,7 @@ namespace Roguelove
             this.rotation = (float)Math.Atan2(velocity.Y, velocity.X);
             this.origin = new Vector2(texture.Width, texture.Height) / 2;
 
-            this.radius = 8;
+            this.radius = 24;
         }
 
         protected override void OnDestroy()
