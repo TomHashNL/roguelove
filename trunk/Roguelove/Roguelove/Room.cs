@@ -62,6 +62,10 @@ namespace Roguelove
         /// </summary>
         public RoomType roomType;
         public bool visited;
+        /// <summary>
+        /// DO NOT SET
+        /// </summary>
+        public Matrix matrix;
 
         public Room(Map map)
         {
@@ -366,6 +370,7 @@ namespace Roguelove
                 matrix = Matrix.CreateTranslation(new Vector3(offset, 0))
                     * Matrix.CreateTranslation(new Vector3(menuOffset, 0))
                     * Matrix.CreateScale(scale);
+                this.matrix = matrix;
 
                 map.game.spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.LinearWrap, null, null, null, matrix);
 
@@ -385,7 +390,7 @@ namespace Roguelove
                 matrix = Matrix.CreateTranslation(new Vector3(offset, 0))
                     * Matrix.CreateScale(scale);
 
-                map.game.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, matrix);
+                map.game.spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, matrix);
 
                 map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("hud"), Vector2.Zero, Color.White);
 

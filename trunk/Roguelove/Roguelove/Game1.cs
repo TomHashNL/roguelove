@@ -68,7 +68,10 @@ namespace Roguelove
 
             // TODO: use this.Content to load your game content here
             List<PlayerControl> playersControl = new List<PlayerControl>();
-            playersControl.Add(new PlayerControl(0, InputType.Gamepad1));
+            playersControl.Add(new PlayerControl(0, InputType.Keyboard));
+            //playersControl.Add(new PlayerControl(1, InputType.Gamepad1));
+            //playersControl.Add(new PlayerControl(2, InputType.Gamepad1));
+            //playersControl.Add(new PlayerControl(3, InputType.Keyboard));
             GameStateChange(new Map(this, playersControl, 0));
         }
 
