@@ -103,7 +103,14 @@ namespace Roguelove
                                                         Vector2 force = blockVector * (distanceCollision - distance) / 2;
                                                         if (force.Length() > 5)
                                                             force = Vector2.Normalize(force) * 5;
-                                                        velocity += force;
+                                                        velocity += force * 2;
+
+                                                        //velocity = Vector2.Transform(velocity, Quaternion.CreateFromAxisAngle(Vector3.UnitZ, -(float)direction));
+                                                        //if (velocity.X > 0)
+                                                        //    velocity.X = 0;
+                                                        //velocity = Vector2.Transform(velocity, Quaternion.CreateFromAxisAngle(Vector3.UnitZ, +(float)direction));
+
+                                                        //position += force * 4;
 
                                                         entity.velocity *= .8f;
                                                     }

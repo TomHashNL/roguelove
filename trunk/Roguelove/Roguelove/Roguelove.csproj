@@ -110,6 +110,10 @@
     <Compile Include="Block.cs" />
     <Compile Include="Bomb.cs" />
     <Compile Include="Bullet.cs" />
+    <Compile Include="Door.cs" />
+    <Compile Include="DoorOpen.cs" />
+    <Compile Include="Enemy.cs" />
+    <Compile Include="IDoor.cs" />
     <Compile Include="ISolid.cs" />
     <Compile Include="LockedChest.cs" />
     <Compile Include="Chest.cs" />
@@ -117,6 +121,7 @@
     <Compile Include="GameState.cs" />
     <Compile Include="Hole.cs" />
     <Compile Include="InputType.cs" />
+    <Compile Include="LockedDoor.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerControl.cs" />

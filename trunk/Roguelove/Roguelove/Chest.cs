@@ -28,7 +28,11 @@ namespace Roguelove
         {
             velocity *= .9f;
 
-            var collisions = Collide(new HashSet<Type>(new[] { typeof(ISolid), }), true);
+            var collisions = Collide(new HashSet<Type>(new[]
+            {
+                typeof(ISolid),
+                typeof(IDoor),
+            }), true);
             if (!open)
                 foreach (var entity in collisions)
                     if (entity.GetType() == typeof(Player))

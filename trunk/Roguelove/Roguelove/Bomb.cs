@@ -39,15 +39,19 @@ namespace Roguelove
 
             velocity *= .95f;
 
-            Collide(new HashSet<Type>(new[]
+            foreach (var entity in Collide(new HashSet<Type>(new[]
             {
                 typeof(ISolid),
-            }), true);
+                typeof(Bullet),
+                typeof(IDoor),
+            }), true))
+                if (entity is Bullet)
+                    entity.Destroy();
 
             position += velocity;
 
             //bomb destroy
-            if (frames > 200)
+            if (frames > 150)
             {
                 Destroy();
                 foreach (var entity in room.entities)
