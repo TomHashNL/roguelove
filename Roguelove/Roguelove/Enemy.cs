@@ -19,16 +19,6 @@ namespace Roguelove
             health = healthMax;
         }
 
-        protected override void OnDestroy()
-        {
-
-        }
-
-        public override void Update()
-        {
-
-        }
-
         public void Health(float healthDelta)
         {
             health += healthDelta;

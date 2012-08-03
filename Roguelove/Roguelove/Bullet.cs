@@ -9,7 +9,9 @@ namespace Roguelove
 {
     public class Bullet : Entity
     {
-        public Bullet(Room room, Vector2 position, Vector2 velocity)
+        private float damage;
+
+        public Bullet(Room room, Vector2 position, Vector2 velocity, float damage)
             : base(room)
         {
             this.position = position;
@@ -20,22 +22,37 @@ namespace Roguelove
             this.origin = new Vector2(texture.Width, texture.Height) / 2;
 
             this.radius = 24;
+
+            this.damage = damage;
         }
 
         protected override void OnDestroy()
         {
-            
+
         }
 
         public override void Update()
         {
-            if (Collide(new HashSet<Type>(new[]
+            var collisions = Collide(new HashSet<Type>(new[]
             {
                 typeof(Block),
                 typeof(WallBlock),
                 typeof(IDoor),
-            }), false).Count > 0)
+                typeof(Enemy),
+            }), true);
+
+            if (collisions.Count > 0)
+            {
+                var enemy = collisions.First() as Enemy;
+                if (enemy != null)
+                {
+                    enemy.Health(-damage);
+                    enemy.velocity += Vector2.Normalize(velocity) * 40;
+                }
                 Destroy();
+            }
+
+
 
             position += velocity;
 

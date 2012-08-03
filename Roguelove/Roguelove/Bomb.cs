@@ -11,6 +11,7 @@ namespace Roguelove
     {
         int frames;
         float blastRadius;
+        private float damage;
 
         public Bomb(Room room, Vector2 position)
             : base(room)
@@ -22,6 +23,8 @@ namespace Roguelove
             this.collidable = false;
 
             this.blastRadius = room.tileSize * 4f;
+
+            this.damage = 4;
         }
 
         protected override void OnDestroy()
@@ -66,11 +69,13 @@ namespace Roguelove
                             offset.Normalize();
                             entity.velocity += offset * (blastRadius - distance) / 8;
 
+                            if (entity is Enemy) (entity as Enemy).Health(-damage);
+
                             if (entity is Block && distance < blastRadius / 2)
                             {
                                 entity.Destroy();
-                                //
 
+                                //Fill holes
                                 Vector2 gridPos = new Vector2((int)((position.X)/room.tileSize)*room.tileSize, (int)((position.Y)/room.tileSize)*room.tileSize);
                                 Vector2 delta = entity.position - gridPos;
                                 if(delta.Length()==room.tileSize)
