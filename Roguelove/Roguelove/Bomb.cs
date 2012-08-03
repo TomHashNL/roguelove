@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Roguelove
 {
-    public class Bomb : Entity
+    public class Bomb : Entity, ISolid
     {
         int frames;
         float blastRadius;
@@ -41,17 +41,12 @@ namespace Roguelove
 
             Collide(new HashSet<Type>(new[]
             {
-                typeof(Block),
-                typeof(WallBlock),
-                typeof(Hole),
-                typeof(Bomb),
-                typeof(Player),
-                typeof(Bullet),
-                typeof(Chest),
+                typeof(ISolid),
             }), true);
 
             position += velocity;
 
+            //bomb destroy
             if (frames > 200)
             {
                 Destroy();

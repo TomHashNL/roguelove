@@ -110,6 +110,7 @@
     <Compile Include="Block.cs" />
     <Compile Include="Bomb.cs" />
     <Compile Include="Bullet.cs" />
+    <Compile Include="ISolid.cs" />
     <Compile Include="LockedChest.cs" />
     <Compile Include="Chest.cs" />
     <Compile Include="Entity.cs" />

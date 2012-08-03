@@ -78,9 +78,9 @@ namespace Roguelove
 
             if (collidable)
                 foreach (var entity in room.entities)
-                    if (types.Contains(entity.GetType()))
-                        if (entity != this)
-                            if (entity.collidable)
+                    if (entity != this)
+                        if (entity.collidable)
+                            if (types.FirstOrDefault(e => e.IsAssignableFrom(entity.GetType())) != null)
                             {
                                 Vector2 center = entity.position + new Vector2(room.tileSize / 2) - entity.origin;
                                 if (position.X + radius > center.X - entity.radius)
