@@ -176,8 +176,8 @@ namespace Roguelove
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 game.Exit();
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
-                FloorAdvance();
+            //if (Keyboard.GetState().IsKeyDown(Keys.Space))
+            //    FloorAdvance();
 
             //spawning only for starting room and such =D
             if (floor == 0)
