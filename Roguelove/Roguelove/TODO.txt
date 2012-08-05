@@ -1,5 +1,6 @@
 ﻿-LockedDoors usage
 -enemies, bosses
 -HUD, health/bombs/keys/money, GFX
+-program multiplayer dying and reviving???
 
 -Mapthemes? (maps with pathways, lotsa holes) >?

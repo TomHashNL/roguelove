@@ -21,7 +21,7 @@ namespace Roguelove
         public float damage;
         public float fireRate;
         public int index;
-        InputType inputType;
+        public InputType inputType;
 
         public PlayerControl(int index, InputType inputType)
         {

@@ -7,19 +7,19 @@ namespace Roguelove
 {
     public static class CollectionExtensions
     {
-        public static T MaxT<T, TSelector>(this IEnumerable<T> source, Func<T, TSelector> selector)
+        public static T MaxT<T, TSelector>(this IEnumerable<T> source, Predicate<T> predicate, Func<T, TSelector> selector)
             where TSelector : IComparable<TSelector>
         {
-            return MinMaxT(source, selector, true);
+            return MinMaxT(source, predicate, selector, true);
         }
 
-        public static T MinT<T, TSelector>(this IEnumerable<T> source, Func<T, TSelector> selector)
+        public static T MinT<T, TSelector>(this IEnumerable<T> source, Predicate<T> predicate, Func<T, TSelector> selector)
             where TSelector : IComparable<TSelector>
         {
-            return MinMaxT(source, selector, false);
+            return MinMaxT(source, predicate, selector, false);
         }
 
-        static T MinMaxT<T, TSelector>(this IEnumerable<T> source, Func<T, TSelector> selector, bool max)
+        static T MinMaxT<T, TSelector>(this IEnumerable<T> source, Predicate<T> predicate, Func<T, TSelector> selector, bool max)
             where TSelector : IComparable<TSelector>
         {
             bool set = false;
@@ -27,14 +27,16 @@ namespace Roguelove
             TSelector tSelector = default(TSelector);
 
             foreach (var t in source)
-            {
-                TSelector tSelectorNew = selector.Invoke(t);
-                if (!set || tSelectorNew.CompareTo(tSelector) * (max ? +1 : -1) > 0)
+                if (predicate.Invoke(t))
                 {
-                    result = t;
-                    tSelector = tSelectorNew;
+                    TSelector tSelectorNew = selector.Invoke(t);
+                    if (!set || tSelectorNew.CompareTo(tSelector) * (max ? +1 : -1) > 0)
+                    {
+                        set = true;
+                        result = t;
+                        tSelector = tSelectorNew;
+                    }
                 }
-            }
 
             return result;
         }

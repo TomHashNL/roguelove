@@ -10,7 +10,7 @@ namespace Roguelove
     public class Blob : Enemy, ISolid
     {
         public Blob(Room room, Vector2 position)
-            : base(room, position, 10)
+            : base(room, position, 10, 2)
         {
             texture = room.map.game.Content.Load<Texture2D>("enemy");
             origin = new Vector2(texture.Width, texture.Height) / 2;

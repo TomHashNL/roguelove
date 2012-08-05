@@ -41,9 +41,7 @@ namespace Roguelove
         {
             if (player.playerControl.health < player.playerControl.healthMax)
             {
-                player.playerControl.healthMax += value;
-                if (player.playerControl.health > player.playerControl.healthMax)
-                    player.playerControl.health = player.playerControl.healthMax;
+                player.Health(value);
 
                 //play sounds
                 //effect!

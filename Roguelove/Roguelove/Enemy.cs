@@ -11,13 +11,15 @@ namespace Roguelove
         public float health;
         public float healthMax;
         public bool hit;
+        public int touchDamage;
 
-        public Enemy(Room room, Vector2 position, float healthMax)
+        public Enemy(Room room, Vector2 position, float healthMax, int touchDamage)
             : base(room)
         {
             this.position = position;
             this.healthMax = healthMax;
             this.health = healthMax;
+            this.touchDamage = touchDamage;
         }
 
         public void Health(float healthDelta)

@@ -17,12 +17,23 @@ namespace Roguelove
         public List<PlayerControl> playersControl;
         public readonly double RoomAdjacentSuccessRate = .4;
 
-        public Map(Game1 game, List<PlayerControl> playersControl, int floor)
+        public Map(Game1 game, int floor)
             : base(game)
         {
-            this.playersControl = playersControl;
+            Constructor(game, floor, new List<PlayerControl>());
+        }
+
+        public Map(Game1 game, int floor, List<PlayerControl> playersControl)
+            : base(game)
+        {
+            Constructor(game, floor, playersControl);
+        }
+
+        public void Constructor(Game1 game, int floor, List<PlayerControl> playersControl)
+        {
             this.floor = floor;
-            
+            this.playersControl = playersControl;
+
             RoomChange(Generate((int)((7 + floor * 2) * (1.0 + .3 * game.random.NextDouble()))));
         }
 
@@ -157,17 +168,49 @@ namespace Roguelove
 
         public void FloorAdvance()
         {
-            game.GameStateChange(new Map(game, playersControl, floor + 1));
+            game.GameStateChange(new Map(game, floor + 1, playersControl));
         }
 
         public override void Update()
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 game.Exit();
-            
+
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
                 FloorAdvance();
 
+            //keyboard
+            if (playersControl.FirstOrDefault(e => e.inputType == InputType.Keyboard) == null)
+                if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+                {
+                    var playerControl = new PlayerControl(playersControl.Count, InputType.Keyboard);
+                    playerControl.player = new Player(this.room, playerControl, new Vector2(room.tilesWidth, room.tilesHeight) * room.tileSize / 2, Vector2.Zero);
+
+                    playersControl.Add(playerControl);
+
+                    this.room.Instantiate(playerControl.player);
+                }
+            //gamepads
+            Tuple<PlayerIndex, InputType>[] playerIndexes = new[]
+                {
+                    new Tuple<PlayerIndex, InputType>(PlayerIndex.One, InputType.Gamepad1),
+                    new Tuple<PlayerIndex, InputType>(PlayerIndex.Two, InputType.Gamepad2),
+                    new Tuple<PlayerIndex, InputType>(PlayerIndex.Three, InputType.Gamepad3),
+                    new Tuple<PlayerIndex, InputType>(PlayerIndex.Four, InputType.Gamepad4),
+                };
+            foreach (var playerIndex in playerIndexes)
+                if (playersControl.FirstOrDefault(e => e.inputType == playerIndex.Item2) == null)
+                    if (GamePad.GetState(playerIndex.Item1).IsButtonDown(Buttons.Start))
+                    {
+                        var playerControl = new PlayerControl(playersControl.Count, playerIndex.Item2);
+                        playerControl.player = new Player(this.room, playerControl, new Vector2(room.tilesWidth, room.tilesHeight) * room.tileSize / 2, Vector2.Zero);
+
+                        playersControl.Add(playerControl);
+                        
+                        this.room.Instantiate(playerControl.player);
+                    }
+            
+            //rooom update ;D
             room.Update();
         }
 
