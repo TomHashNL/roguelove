@@ -24,7 +24,7 @@ namespace Roguelove
 
         public override void Update()
         {
-            if (room.entities.Count(e => e is Enemy) > 0)
+            if (!room.clear)
                 Destroy();
         }
 

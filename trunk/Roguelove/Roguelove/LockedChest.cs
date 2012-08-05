@@ -9,7 +9,7 @@ namespace Roguelove
 {
     public class LockedChest : Entity, ISolid
     {
-        bool open;
+        public bool open;
 
         public LockedChest(Room room, Vector2 position)
             : base(room)
@@ -55,6 +55,11 @@ namespace Roguelove
             texture = room.map.game.Content.Load<Texture2D>("lockedChestOpen");
 
             //instantiate shit ;D
+            room.Instantiate(new ItemMoney(room, position, ItemMoneyType.Five));
+            room.Instantiate(new ItemMoney(room, position, ItemMoneyType.Ten));
+            room.Instantiate(new ItemMoney(room, position, ItemMoneyType.Twentyfive));
+            room.Instantiate(new ItemBomb(room, position, ItemBombType.Two));
+            room.Instantiate(new ItemHealth(room, position, ItemHealthType.Two));
         }
     }
 }

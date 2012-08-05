@@ -68,6 +68,11 @@ namespace Roguelove
         /// </summary>
         public Matrix matrix;
 
+        /// <summary>
+        /// DO NOT SET
+        /// </summary>
+        public bool clear;
+
         public Room(Map map)
         {
             this.map = map;
@@ -364,6 +369,8 @@ namespace Roguelove
             foreach (var entity in entitiesAdd)
                 entities.Add(entity);
             entitiesAdd.Clear();
+
+            clear = entities.FirstOrDefault(e => e is Enemy) == null;
         }
 
         public void Instantiate(Entity entity)
@@ -436,8 +443,8 @@ namespace Roguelove
                     Vector2 hudPlayerOffset = hudPlayerOffsets[playerControl.index];
 
                     StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.Append("lifeMax: ").Append(playerControl.lifeMax).Append("\r\n");
-                    stringBuilder.Append("life: ").Append(playerControl.life).Append("\r\n");
+                    stringBuilder.Append("lifeMax: ").Append(playerControl.healthMax).Append("\r\n");
+                    stringBuilder.Append("life: ").Append(playerControl.health).Append("\r\n");
                     stringBuilder.Append("money: ").Append(playerControl.money).Append("\r\n");
                     stringBuilder.Append("bombs: ").Append(playerControl.bombs).Append("\r\n");
                     stringBuilder.Append("keys: ").Append(playerControl.keys).Append("\r\n");
@@ -513,13 +520,15 @@ namespace Roguelove
                                 }
                                 if (room.Value.visited)
                                 {
-                                    if (room.Value.GetHashCode() % 5 == 0)
+                                    if (room.Value.entities.FirstOrDefault(e => e is ItemKey) != null)
                                         map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomKey"), offsetMap + room.Key * tileSize / 2, Color.White);
-                                    if (room.Value.GetHashCode() % 4 == 0)
+                                    if (room.Value.entities.FirstOrDefault(e => e is ItemBomb) != null)
                                         map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomBomb"), offsetMap + room.Key * tileSize / 2, Color.White);
-                                    if (room.Value.GetHashCode() % 6 == 0)
+                                    if (room.Value.entities.FirstOrDefault(e => e is ItemMoney) != null)
                                         map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomMoney"), offsetMap + room.Key * tileSize / 2, Color.White);
-                                    if (room.Value.GetHashCode() % 7 == 0)
+                                    if (room.Value.entities.FirstOrDefault(e => e is ItemHealth) != null)
+                                        map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomHealth"), offsetMap + room.Key * tileSize / 2, Color.White);
+                                    if (room.Value.entities.FirstOrDefault(e => e is Chest && !(e as Chest).open || e is LockedChest && !(e as LockedChest).open) != null)
                                         map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("roomChest"), offsetMap + room.Key * tileSize / 2, Color.White);
                                 }
                             }
