@@ -155,7 +155,12 @@ namespace Roguelove
             playerControl.health += healthDelta;
 
             if (playerControl.health <= 0)
-                room.map.game.GameStateChange(new Map(room.map.game, 0));
+            {
+                if (room.map.playersControl.Where(e => e.player != null).Count() <= 1)
+                    room.map.game.GameStateChange(new Map(room.map.game, 0));
+                else
+                    Destroy();
+            }
 
             if (playerControl.health > playerControl.healthMax)
                 playerControl.health = playerControl.healthMax;

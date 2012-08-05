@@ -1,4 +1,6 @@
-﻿-LockedDoors usage
+﻿-Add next floor door
+-Fix players spawning in eachothers assholes
+-LockedDoors usage
 -enemies, bosses
 -HUD, health/bombs/keys/money, GFX
 -program multiplayer dying and reviving???
