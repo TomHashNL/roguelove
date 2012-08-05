@@ -300,22 +300,25 @@ namespace Roguelove
                 }
 
                 //Spawn some mobs?!
-                List<Point> potentialPlaces = new List<Point>();
-                for (int x = 1; x < tilesWidth - 2; x++)
-                    for (int y = 1; y < tilesHeight - 2; y++)
-                        if (visited[x, y] && grid[x, y] == null)
-                        {
-                            if (Vector2.Distance(new Vector2(x, y), new Vector2(0, tilesHeight / 2)) > 4)
-                                if (Vector2.Distance(new Vector2(x, y), new Vector2(tilesWidth / 2, 0)) > 4)
-                                    if (Vector2.Distance(new Vector2(x, y), new Vector2(tilesWidth - 1, tilesHeight / 2)) > 4)
-                                        if (Vector2.Distance(new Vector2(x, y), new Vector2(tilesWidth / 2, tilesHeight - 1)) > 4)
-                                            potentialPlaces.Add(new Point(x, y));
-                        }
-
-                if (potentialPlaces.Count != 0)
+                for (int i = 0; i < 3; i++)
                 {
-                    Point spawnPoint = potentialPlaces[random.Next(potentialPlaces.Count() - 1)];
-                    grid[spawnPoint.X, spawnPoint.Y] = new Blob(this, new Vector2(spawnPoint.X * tileSize, spawnPoint.Y * tileSize) + new Vector2(tileSize / 2));
+                    List<Point> potentialPlaces = new List<Point>();
+                    for (int x = 1; x < tilesWidth - 2; x++)
+                        for (int y = 1; y < tilesHeight - 2; y++)
+                            if (visited[x, y] && grid[x, y] == null)
+                            {
+                                if (Vector2.Distance(new Vector2(x, y), new Vector2(0, tilesHeight / 2)) > 4)
+                                    if (Vector2.Distance(new Vector2(x, y), new Vector2(tilesWidth / 2, 0)) > 4)
+                                        if (Vector2.Distance(new Vector2(x, y), new Vector2(tilesWidth - 1, tilesHeight / 2)) > 4)
+                                            if (Vector2.Distance(new Vector2(x, y), new Vector2(tilesWidth / 2, tilesHeight - 1)) > 4)
+                                                potentialPlaces.Add(new Point(x, y));
+                            }
+
+                    if (potentialPlaces.Count != 0)
+                    {
+                        Point spawnPoint = potentialPlaces[random.Next(potentialPlaces.Count() - 1)];
+                        grid[spawnPoint.X, spawnPoint.Y] = new Blob(this, new Vector2(spawnPoint.X * tileSize, spawnPoint.Y * tileSize) + new Vector2(tileSize / 2));
+                    }
                 }
 
                 //Check if everything pwns
