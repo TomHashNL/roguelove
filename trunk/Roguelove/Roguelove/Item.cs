@@ -24,7 +24,14 @@ namespace Roguelove
 
         public override void Update()
         {
-            var collisions = Collide(new HashSet<Type>(new[] { typeof(ISolid), typeof(Door), }), true);
+            var collisions = Collide(new HashSet<Type>(new[]
+            {
+                typeof(Block),
+                typeof(WallBlock),
+                typeof(Hole),
+                typeof(Door),
+                typeof(Player),
+            }), true);
 
             Player player = collisions.FirstOrDefault(e => e is Player) as Player;
             if (player != null)

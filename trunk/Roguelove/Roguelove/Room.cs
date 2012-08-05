@@ -133,7 +133,8 @@ namespace Roguelove
 
             //blargh boss here ;D
             //Spawn some mobs?!
-            for (int i = 0; i < 16; i++)
+            int count = map.game.random.Next(16 + map.floor * 4);
+            for (int i = 0; i < count; i++)
             {
                 List<Point> potentialPlaces = new List<Point>();
                 for (int x = 1; x < tilesWidth - 2; x++)
@@ -147,15 +148,15 @@ namespace Roguelove
                                             potentialPlaces.Add(new Point(x, y));
                         }
 
-                if (potentialPlaces.Count != 0)
-                {
-                    Point spawnPoint = potentialPlaces[random.Next(potentialPlaces.Count() - 1)];
-                    Vector2 position = new Vector2(spawnPoint.X * tileSize, spawnPoint.Y * tileSize) + new Vector2(tileSize / 2);
-                    if (map.game.random.Next(2) == 0)
-                        grid[spawnPoint.X, spawnPoint.Y] = new Blob(this, position);
-                    else
-                        grid[spawnPoint.X, spawnPoint.Y] = new Fly(this, position);
-                }
+                if (potentialPlaces.Count == 0)
+                    break;
+
+                Point spawnPoint = potentialPlaces[random.Next(potentialPlaces.Count() - 1)];
+                Vector2 position = new Vector2(spawnPoint.X * tileSize, spawnPoint.Y * tileSize) + new Vector2(tileSize / 2);
+                if (map.game.random.Next(2) == 0)
+                    grid[spawnPoint.X, spawnPoint.Y] = new Blob(this, position);
+                else
+                    grid[spawnPoint.X, spawnPoint.Y] = new Fly(this, position);
             }
 
             return grid;
@@ -339,7 +340,8 @@ namespace Roguelove
                 }
 
                 //Spawn some mobs?!
-                for (int i = 0; i < 4; i++)
+                int count = map.game.random.Next(6 + 3 * map.floor);
+                for (int i = 0; i < count; i++)
                 {
                     List<Point> potentialPlaces = new List<Point>();
                     for (int x = 1; x < tilesWidth - 2; x++)
@@ -353,15 +355,15 @@ namespace Roguelove
                                                 potentialPlaces.Add(new Point(x, y));
                             }
 
-                    if (potentialPlaces.Count != 0)
-                    {
-                        Point spawnPoint = potentialPlaces[random.Next(potentialPlaces.Count() - 1)];
-                        Vector2 position = new Vector2(spawnPoint.X * tileSize, spawnPoint.Y * tileSize) + new Vector2(tileSize / 2);
-                        if (map.game.random.Next(2) == 0)
-                            grid[spawnPoint.X, spawnPoint.Y] = new Blob(this, position);
-                        else
-                            grid[spawnPoint.X, spawnPoint.Y] = new Fly(this, position);
-                    }
+                    if (potentialPlaces.Count == 0)
+                        break;
+
+                    Point spawnPoint = potentialPlaces[random.Next(potentialPlaces.Count() - 1)];
+                    Vector2 position = new Vector2(spawnPoint.X * tileSize, spawnPoint.Y * tileSize) + new Vector2(tileSize / 2);
+                    if (map.game.random.Next(2) == 0)
+                        grid[spawnPoint.X, spawnPoint.Y] = new Blob(this, position);
+                    else
+                        grid[spawnPoint.X, spawnPoint.Y] = new Fly(this, position);
                 }
 
                 //Check if everything pwns
