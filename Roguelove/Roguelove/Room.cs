@@ -30,11 +30,11 @@ namespace Roguelove
         public readonly double blockEdgeRate = 0.5;
         public readonly double blockCornerRate = 0.125;
 
-        public readonly double blockHoleRate = 0.015625;
+        public readonly double blockHoleRate = 0.0625;
         public readonly double holeEdgeRate = 0.5;
         public readonly double holeCornerRate = 0.125;
         public readonly int minHoleSpreadCount = 4;
-        public readonly int maxHoleSpreadCount = 20;
+        public readonly int maxHoleSpreadCount = 200;
         public readonly int maxHoleBruteForceTries = 100;
 
         public readonly double chestRate = 0.25;
@@ -109,7 +109,13 @@ namespace Roguelove
             for (int x = 0; x < tilesWidth; x++)
                 for (int y = 0; y < tilesHeight; y++)
                     if (grid[x, y] != null)
+                    {
+                        //Instantiate
                         Instantiate(grid[x, y]);
+
+                        //Auto tile
+                        if (grid[x, y] is Hole) (grid[x, y] as Hole).autoTile(grid);
+                    }
         }
 
         //generate start room
@@ -186,13 +192,14 @@ namespace Roguelove
                                     int prevY = holeY;
                                     int dir = random.Next(0, 4);
 
-                                    if (dir == 1 && holeX > 1)
+                                    if (dir == 0 && holeX > 1)
                                         holeX--;
-                                    if (dir == 2 && holeY > 1)
+                                    if (dir == 1 && holeY > 1)
                                         holeY--;
-                                    if (dir == 3 && holeX < tilesWidth - 2)
+                                    if (dir == 2 && holeX < tilesWidth - 2)
                                         holeX++;
-                                    if (dir == 4 && holeY < tilesHeight - 2)
+                                    if (dir == 3
+                                        && holeY < tilesHeight - 2)
                                         holeY++;
 
                                     if (grid[holeX, holeY] == null)
@@ -476,6 +483,10 @@ namespace Roguelove
                 //draw background
                 Rectangle rectangleBackground = new Rectangle((int)(-offset.X - menuOffset.X), (int)(-offset.Y - menuOffset.Y), (int)(screen.X / scale), (int)(screen.Y / scale));
                 map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("background"), rectangleBackground, rectangleBackground, Color.White);
+
+                map.game.spriteBatch.End();
+
+                map.game.spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, matrix);
 
                 //draw all entities
                 foreach (var entity in entities.OrderBy(e => e.position.Y))
