@@ -61,7 +61,7 @@ namespace Roguelove
 
             Color col = Color.Gray;
 
-            if (solid[1]) room.map.game.spriteBatch.Draw(edgeWallTexture, position, Color.White);
+            if (solid[1]) room.map.game.spriteBatch.Draw(edgeWallTexture, position, col);
 
             if (solid[0]) room.map.game.spriteBatch.Draw(edgeVertTexture, position + new Vector2(-32, 0), col);
             if (solid[1]) room.map.game.spriteBatch.Draw(edgeHorTexture, position + new Vector2(0, -32), col);

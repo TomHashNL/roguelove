@@ -129,9 +129,36 @@ namespace Roguelove
         //generate boss room
         Entity[,] GenerateBossRoom(Random random)
         {
-            return GenerateDefaultRoom(random);
+            var grid = GenerateDefaultRoom(random);
 
             //blargh boss here ;D
+            //Spawn some mobs?!
+            for (int i = 0; i < 16; i++)
+            {
+                List<Point> potentialPlaces = new List<Point>();
+                for (int x = 1; x < tilesWidth - 2; x++)
+                    for (int y = 1; y < tilesHeight - 2; y++)
+                        if (grid[x, y] == null)
+                        {
+                            if (Vector2.Distance(new Vector2(x, y), new Vector2(0, tilesHeight / 2)) > 4)
+                                if (Vector2.Distance(new Vector2(x, y), new Vector2(tilesWidth / 2, 0)) > 4)
+                                    if (Vector2.Distance(new Vector2(x, y), new Vector2(tilesWidth - 1, tilesHeight / 2)) > 4)
+                                        if (Vector2.Distance(new Vector2(x, y), new Vector2(tilesWidth / 2, tilesHeight - 1)) > 4)
+                                            potentialPlaces.Add(new Point(x, y));
+                        }
+
+                if (potentialPlaces.Count != 0)
+                {
+                    Point spawnPoint = potentialPlaces[random.Next(potentialPlaces.Count() - 1)];
+                    Vector2 position = new Vector2(spawnPoint.X * tileSize, spawnPoint.Y * tileSize) + new Vector2(tileSize / 2);
+                    if (map.game.random.Next(2) == 0)
+                        grid[spawnPoint.X, spawnPoint.Y] = new Blob(this, position);
+                    else
+                        grid[spawnPoint.X, spawnPoint.Y] = new Fly(this, position);
+                }
+            }
+
+            return grid;
         }
 
         //Generate default room
@@ -487,6 +514,14 @@ namespace Roguelove
                 map.game.spriteBatch.End();
 
                 map.game.spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, matrix);
+
+                if (map.floor == 0)
+                    if (roomType == RoomType.Start)
+                    {
+                        SpriteFont spriteFont = map.game.Content.Load<SpriteFont>("font");
+                        string tutorial = "Press [Start] or [Enter] to play!\r\n[WASD] or (LS) Move\r\n[Arrow Keys] or (RS) Shoot\r\n[E] or (B) Drop bomb";
+                        map.game.spriteBatch.DrawString(spriteFont, tutorial, (new Vector2(tilesWidth, tilesHeight) * tileSize - spriteFont.MeasureString(tutorial)) / 2, Color.White * .5f);
+                    }
 
                 //draw all entities
                 foreach (var entity in entities.OrderBy(e => new Tuple<float, float>(-e.layerDepth, e.position.Y)))
