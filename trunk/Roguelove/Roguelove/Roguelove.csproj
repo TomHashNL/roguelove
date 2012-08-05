@@ -116,6 +116,7 @@
     <Compile Include="DoorOpen.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Fly.cs" />
+    <Compile Include="Hatch.cs" />
     <Compile Include="IDoor.cs" />
     <Compile Include="ISolid.cs" />
     <Compile Include="Item.cs" />

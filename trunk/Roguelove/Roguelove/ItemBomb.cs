@@ -13,7 +13,7 @@ namespace Roguelove
         Two,
     }
 
-    public class ItemBomb : Item, ISolid
+    public class ItemBomb : Item
     {
         int value;
 

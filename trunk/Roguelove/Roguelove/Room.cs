@@ -439,6 +439,16 @@ namespace Roguelove
         private void ClearBoss(Vector2 position)
         {
             //spawn awesome pickup ;D
+            foreach (var playerControl in map.playersControl)
+            {
+                playerControl.healthMax++;
+                playerControl.health++;
+
+                playerControl.fireRate++;
+                playerControl.damage += .3f;
+            }
+
+            Instantiate(new Hatch(this));
         }
 
         void ClearEnemy(Vector2 position)
