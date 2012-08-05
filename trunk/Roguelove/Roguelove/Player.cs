@@ -16,7 +16,8 @@ namespace Roguelove
         PlayerControlState playerControlState;
         PlayerControlState playerControlStatePrevious;
         int shot;
-        bool hurt;
+        int hurt;
+        readonly int hurtTime = 120;
 
         public Player(Room room, PlayerControl playerControl, Vector2 position, Vector2 velocity)
             : base(room)
@@ -38,6 +39,13 @@ namespace Roguelove
 
         public override void Update()
         {
+            //hurt
+            if (hurt > 0)
+                hurt--;
+            if (hurt > 0)
+                color = ((hurt / 10) % 2 == 0) ? Color.White : Color.Black;
+
+            //shot
             if (shot > 0)
                 shot--;
 
@@ -111,13 +119,17 @@ namespace Roguelove
             }
 
             //apply physics!
-            Collide(new HashSet<Type>(new[]
+            var collisions = Collide(new HashSet<Type>(new[]
             {
                 typeof(ISolid),
                 typeof(Door),
                 typeof(LockedDoor),
                 typeof(Item),
+                typeof(Enemy),
             }), true);
+            var enemy = collisions.FirstOrDefault(e => e is Enemy) as Enemy;
+            if (enemy != null)
+                Health(-enemy.touchDamage);
 
             position += velocity;
 
@@ -131,10 +143,19 @@ namespace Roguelove
 
         public void Health(int healthDelta)
         {
-            playerControl.healthMax += healthDelta;
+            //hurt?
+            if (healthDelta < 0)
+            {
+                if (hurt > 0)
+                    return;
+
+                hurt = hurtTime;
+            }
+
+            playerControl.health += healthDelta;
 
             if (playerControl.health <= 0)
-                room.map.game.GameStateChange(new Map(room.map.game, room.map.playersControl, 0));
+                room.map.game.GameStateChange(new Map(room.map.game, 0));
 
             if (playerControl.health > playerControl.healthMax)
                 playerControl.health = playerControl.healthMax;

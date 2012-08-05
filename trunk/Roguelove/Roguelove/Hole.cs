@@ -23,6 +23,8 @@ namespace Roguelove
             edgeWallTexture = room.map.game.Content.Load<Texture2D>("holeEdgeWall");
             this.position = position;
 
+            this.layerDepth = 1;
+
             solid = new bool[4];
         }
 

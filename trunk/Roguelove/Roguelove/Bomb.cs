@@ -58,7 +58,6 @@ namespace Roguelove
             {
                 Destroy();
                 foreach (var entity in room.entities)
-                    //if (typeof(ISolid).IsAssignableFrom(entity.GetType()))
                     if (entity is ISolid)
                     {
                         float distance = (position - (entity.position + new Vector2(entity.radius))).Length();
@@ -81,10 +80,12 @@ namespace Roguelove
                                 Vector2 delta = entity.position - gridPos;
                                 if (delta.Length() == room.tileSize)
                                 {
-                                    var hole = room.entities.FirstOrDefault(e => e.position == entity.position + delta && e is Hole);
+                                    var hole = room.entities.FirstOrDefault(e => e.position == entity.position + delta && e is Hole) as Hole;
                                     if (hole != null)
+                                    {
                                         hole.Destroy();
-                                    //TODO: add rubble effect
+                                        room.Instantiate(new ParticleHole(room, hole));
+                                    }
                                 }
                             }
 

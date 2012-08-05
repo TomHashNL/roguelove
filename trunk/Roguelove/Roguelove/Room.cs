@@ -369,7 +369,7 @@ namespace Roguelove
         public void Update()
         {
             KeyboardState keyboardState = Keyboard.GetState();
-            if (keyboardState.IsKeyDown(Keys.Enter))
+            if (keyboardState.IsKeyDown(Keys.P))
                 Generate();
             //Stuff
             foreach (var entity in entities)
@@ -489,7 +489,7 @@ namespace Roguelove
                 map.game.spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, matrix);
 
                 //draw all entities
-                foreach (var entity in entities.OrderBy(e => e.position.Y))
+                foreach (var entity in entities.OrderBy(e => new Tuple<float, float>(-e.layerDepth, e.position.Y)))
                     entity.Draw();
 
                 map.game.spriteBatch.End();
@@ -514,6 +514,9 @@ namespace Roguelove
                     new Vector2(viewWidth - hudPlayerWidth, 0),
                 };
                 SpriteFont spriteFont = map.game.Content.Load<SpriteFont>("font");
+                //floor
+                map.game.spriteBatch.DrawString(spriteFont, "floor: " + map.floor, new Vector2(20, viewHeight - 50), Color.White);
+                //playerHUDS
                 foreach (var playerControl in map.playersControl)
                 {
                     Vector2 hudPlayerOffset = hudPlayerOffsets[playerControl.index];
@@ -521,7 +524,7 @@ namespace Roguelove
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.Append("lifeMax: ").Append(playerControl.healthMax).Append("\r\n");
                     stringBuilder.Append("life: ").Append(playerControl.health).Append("\r\n");
-                    stringBuilder.Append("money: ").Append(playerControl.money).Append("\r\n");
+                    stringBuilder.Append("moneys: ").Append(playerControl.money).Append("\r\n");
                     stringBuilder.Append("bombs: ").Append(playerControl.bombs).Append("\r\n");
                     stringBuilder.Append("keys: ").Append(playerControl.keys).Append("\r\n");
 
