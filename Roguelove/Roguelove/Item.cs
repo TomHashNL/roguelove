@@ -12,6 +12,7 @@ namespace Roguelove
             : base(room)
         {
             this.position = position;
+            this.radius = 24;
         }
 
         public override void Update()
@@ -20,10 +21,11 @@ namespace Roguelove
 
             Player player = collisions.FirstOrDefault(e => e is Player) as Player;
             if (player != null)
-            {
                 Pickup(player);
-                Destroy();
-            }
+
+            velocity *= .9f;
+
+            position += velocity;
         }
 
         public abstract void Pickup(Player player);

@@ -12,7 +12,7 @@ namespace Roguelove
         One,
         Five,
         Ten,
-        TwentyFive,
+        Twentyfive,
     }
 
     public class ItemMoney : Item
@@ -26,31 +26,40 @@ namespace Roguelove
             {
                 case ItemMoneyType.One:
                     value = 1;
-                    texture = room.map.game.Content.Load<Texture2D>("player");
+                    texture = room.map.game.Content.Load<Texture2D>("itemMoneyOne");
                     break;
                 case ItemMoneyType.Five:
                     value = 5;
-                    texture = room.map.game.Content.Load<Texture2D>("player");
+                    texture = room.map.game.Content.Load<Texture2D>("itemMoneyFive");
                     break;
                 case ItemMoneyType.Ten:
                     value = 10;
-                    texture = room.map.game.Content.Load<Texture2D>("player");
+                    texture = room.map.game.Content.Load<Texture2D>("itemMoneyTen");
                     break;
-                case ItemMoneyType.TwentyFive:
+                case ItemMoneyType.Twentyfive:
                     value = 25;
-                    texture = room.map.game.Content.Load<Texture2D>("player");
+                    texture = room.map.game.Content.Load<Texture2D>("itemMoneyTwentyfive");
                     break;
                 default:
                     throw new NotImplementedException("ItemMoneyType not working?!");
             }
+
             origin = new Vector2(texture.Width, texture.Height) / 2;
         }
 
         public override void Pickup(Player player)
         {
-            player.playerControl.money += value;
-            //play sounds?
-            //play effect ;D
+            if (player.playerControl.money < player.playerControl.moneyMax)
+            {
+                player.playerControl.money += value;
+                if (player.playerControl.money > player.playerControl.moneyMax)
+                    player.playerControl.money = player.playerControl.moneyMax;
+
+                //play sounds?
+                //play effect ;D
+
+                Destroy();
+            }
         }
 
         protected override void OnDestroy()

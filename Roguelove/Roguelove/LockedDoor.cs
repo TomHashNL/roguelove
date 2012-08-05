@@ -24,7 +24,7 @@ namespace Roguelove
 
         public override void Update()
         {
-            if (room.entities.Count(e => e is Enemy) == 0)
+            if (room.clear)
             {
                 //get a player who is colliding with more than 0 keys
                 var collision = Collide(new HashSet<Type>(new[] { typeof(Player), }), false)

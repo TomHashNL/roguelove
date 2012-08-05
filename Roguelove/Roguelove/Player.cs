@@ -47,9 +47,7 @@ namespace Roguelove
             velocity += playerControlState.position * 2f;
             velocity *= .8f;
 
-            if (playerControlState.bomb)
-                if (!playerControlStatePrevious.bomb)
-                    room.Instantiate(new Bomb(room, position));
+            Bomb();
 
             //check doors!
             {
@@ -127,6 +125,17 @@ namespace Roguelove
                     room.Instantiate(new Bullet(room, position, Vector2.Normalize(playerControlState.fire) * 15 + velocity / 2, playerControl.damage));
                     shot = 10;
                 }
+        }
+
+        private void Bomb()
+        {
+            if (playerControlState.bomb)
+                if (!playerControlStatePrevious.bomb)
+                    if (playerControl.bombs > 0)
+                    {
+                        room.Instantiate(new Bomb(room, position));
+                        playerControl.bombs--;
+                    }
         }
     }
 }

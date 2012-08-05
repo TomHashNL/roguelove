@@ -10,10 +10,13 @@ namespace Roguelove
     public class PlayerControl
     {
         public Player player;
-        public int lifeMax;
-        public int life;
+        public int healthMax;
+        public int health;
+        public int moneyMax;
         public int money;
+        public int bombsMax;
         public int bombs;
+        public int keysMax;
         public int keys;
         public float damage;
         public float fireRate;
@@ -24,9 +27,14 @@ namespace Roguelove
         {
             this.index = index;
             this.inputType = inputType;
-            this.lifeMax = 3;
-            this.life = 3;
+            this.healthMax = 6;
+            this.health = this.healthMax;
+            this.bombsMax = 99;
             this.bombs = 1;
+            this.moneyMax = 99;
+            this.money = 0;
+            this.keysMax = 99;
+            this.keys = 0;
             this.damage = 1;
             this.fireRate = 1;
         }
