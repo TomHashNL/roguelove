@@ -17,8 +17,8 @@ namespace Roguelove
     {
         int value;
 
-        public ItemBomb(Room room, Vector2 position, ItemBombType itemBombType)
-            : base(room, position)
+        public ItemBomb(Room room, Vector2 position, bool velocity, ItemBombType itemBombType)
+            : base(room, position, velocity)
         {
             switch (itemBombType)
             {

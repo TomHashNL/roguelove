@@ -17,8 +17,8 @@ namespace Roguelove
     {
         int value;
 
-        public ItemHealth(Room room, Vector2 position, ItemHealthType itemHealthType)
-            : base(room, position)
+        public ItemHealth(Room room, Vector2 position, bool velocity, ItemHealthType itemHealthType)
+            : base(room, position, velocity)
         {
             switch (itemHealthType)
             {

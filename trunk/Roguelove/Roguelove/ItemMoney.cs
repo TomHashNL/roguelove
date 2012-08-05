@@ -19,8 +19,8 @@ namespace Roguelove
     {
         public int value;
 
-        public ItemMoney(Room room, Vector2 position, ItemMoneyType itemMoneyType)
-            : base(room, position)
+        public ItemMoney(Room room, Vector2 position, bool velocity, ItemMoneyType itemMoneyType)
+            : base(room, position, velocity)
         {
             switch (itemMoneyType)
             {

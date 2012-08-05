@@ -6,13 +6,20 @@ using Microsoft.Xna.Framework;
 
 namespace Roguelove
 {
-    public abstract class Item : Entity, ISolid
+    public abstract class Item : Entity
     {
-        public Item(Room room, Vector2 position)
+        public Item(Room room, Vector2 position, bool velocity)
             : base(room)
         {
             this.position = position;
             this.radius = 24;
+
+            if (velocity)
+            {
+                double rotation = room.map.game.random.NextDouble() * Math.PI;
+                float speed = (float)room.map.game.random.NextDouble() * .1f;
+                this.velocity = new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * speed;
+            }
         }
 
         public override void Update()
@@ -23,7 +30,7 @@ namespace Roguelove
             if (player != null)
                 Pickup(player);
 
-            velocity *= .9f;
+            velocity *= .97f;
 
             position += velocity;
         }

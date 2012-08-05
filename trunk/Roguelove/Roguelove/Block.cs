@@ -14,6 +14,7 @@ namespace Roguelove
         {
             texture = room.map.game.Content.Load<Texture2D>("block");
             this.position = position;
+            this.layerDepth = 1;
         }
 
         protected override void OnDestroy()
