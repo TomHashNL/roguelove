@@ -47,11 +47,11 @@ namespace Roguelove
             texture = room.map.game.Content.Load<Texture2D>("chestOpen");
 
             //instantiate shit ;D
-            room.Instantiate(new ItemMoney(room, position, ItemMoneyType.One));
-            room.Instantiate(new ItemMoney(room, position, ItemMoneyType.One));
-            room.Instantiate(new ItemBomb(room, position, ItemBombType.One));
-            room.Instantiate(new ItemHealth(room, position, ItemHealthType.One));
-            room.Instantiate(new ItemKey(room, position));
+            room.Instantiate(new ItemMoney(room, position, true, ItemMoneyType.One));
+            room.Instantiate(new ItemMoney(room, position, true, ItemMoneyType.One));
+            room.Instantiate(new ItemBomb(room, position, true, ItemBombType.One));
+            room.Instantiate(new ItemHealth(room, position, true, ItemHealthType.One));
+            room.Instantiate(new ItemKey(room, position, true));
         }
     }
 }

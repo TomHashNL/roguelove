@@ -60,10 +60,13 @@ namespace Roguelove
                     for (int i = 0; i < newPoints.Count; i++)
                     {
                         Point point = newPoints[i];
-                        Point[] points = new Point[4] {new Point(point.X - 1, point.Y),
-                                            new Point(point.X, point.Y - 1),
-                                            new Point(point.X + 1, point.Y),
-                                            new Point(point.X, point.Y + 1)};
+                        Point[] points = new Point[4]
+                        {
+                            new Point(point.X - 1, point.Y),
+                            new Point(point.X + 1, point.Y),
+                            new Point(point.X, point.Y - 1),
+                            new Point(point.X, point.Y + 1),
+                        };
 
                         bool endPoint = true;
                         foreach (Point p in points)

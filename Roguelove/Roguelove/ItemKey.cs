@@ -9,8 +9,8 @@ namespace Roguelove
 {
     public class ItemKey : Item
     {
-        public ItemKey(Room room, Vector2 position)
-            : base(room, position)
+        public ItemKey(Room room, Vector2 position, bool velocity)
+            : base(room, position, velocity)
         {
             texture = room.map.game.Content.Load<Texture2D>("itemKey");
 

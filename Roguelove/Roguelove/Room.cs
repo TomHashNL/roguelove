@@ -305,7 +305,7 @@ namespace Roguelove
                 }
 
                 //Spawn some mobs?!
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 4; i++)
                 {
                     List<Point> potentialPlaces = new List<Point>();
                     for (int x = 1; x < tilesWidth - 2; x++)
@@ -322,7 +322,11 @@ namespace Roguelove
                     if (potentialPlaces.Count != 0)
                     {
                         Point spawnPoint = potentialPlaces[random.Next(potentialPlaces.Count() - 1)];
-                        grid[spawnPoint.X, spawnPoint.Y] = new Blob(this, new Vector2(spawnPoint.X * tileSize, spawnPoint.Y * tileSize) + new Vector2(tileSize / 2));
+                        Vector2 position = new Vector2(spawnPoint.X * tileSize, spawnPoint.Y * tileSize) + new Vector2(tileSize / 2);
+                        if (map.game.random.Next(2) == 0)
+                            grid[spawnPoint.X, spawnPoint.Y] = new Blob(this, position);
+                        else
+                            grid[spawnPoint.X, spawnPoint.Y] = new Fly(this, position);
                     }
                 }
 
@@ -370,7 +374,68 @@ namespace Roguelove
                 entities.Add(entity);
             entitiesAdd.Clear();
 
-            clear = entities.FirstOrDefault(e => e is Enemy) == null;
+            //clear
+            {
+                bool clearPrevious = clear;
+                clear = entities.FirstOrDefault(e => e is Enemy) == null;
+                //drop
+                if (clear)
+                    if (!clearPrevious)
+                    {
+                        Vector2 position = new Vector2(100);
+
+                        switch (roomType)
+                        {
+                            case RoomType.Start:
+                                //do nothing =P
+                                break;
+                            case RoomType.Enemy:
+                                ClearEnemy(position);
+                                break;
+                            case RoomType.Boss:
+                                ClearBoss(position);
+                                break;
+                            default:
+                                throw new NotImplementedException("RoomType not implemented!");
+                        }
+                    }
+            }
+        }
+
+        private void ClearBoss(Vector2 position)
+        {
+            //spawn awesome pickup ;D
+        }
+
+        void ClearEnemy(Vector2 position)
+        {
+            switch (map.game.random.Next(12))
+            {
+                case 0:
+                    if (map.game.random.Next(8) == 0)// 1/8 spawn 5 money
+                        Instantiate(new ItemMoney(this, position, false, ItemMoneyType.Five));
+                    else
+                        Instantiate(new ItemMoney(this, position, false, ItemMoneyType.One));
+                    break;
+                case 1:
+                    if (map.game.random.Next(4) == 0)// 1/4 spawn 2 bombs
+                        Instantiate(new ItemBomb(this, position, false, ItemBombType.Two));
+                    else
+                        Instantiate(new ItemBomb(this, position, false, ItemBombType.One));
+                    break;
+                case 2:
+                    if (map.game.random.Next(2) == 0)// 1/2 spawn 2 health
+                        Instantiate(new ItemHealth(this, position, false, ItemHealthType.Two));
+                    else
+                        Instantiate(new ItemHealth(this, position, false, ItemHealthType.One));
+                    break;
+                case 3:
+                    Instantiate(new ItemKey(this, position, false));
+                    break;
+                default:
+                    //DONT DO ANYTHING ;D hihihi
+                    break;
+            }
         }
 
         public void Instantiate(Entity entity)
@@ -413,7 +478,7 @@ namespace Roguelove
                 map.game.spriteBatch.Draw(map.game.Content.Load<Texture2D>("background"), rectangleBackground, rectangleBackground, Color.White);
 
                 //draw all entities
-                foreach (var entity in entities)
+                foreach (var entity in entities.OrderBy(e => e.position.Y))
                     entity.Draw();
 
                 map.game.spriteBatch.End();

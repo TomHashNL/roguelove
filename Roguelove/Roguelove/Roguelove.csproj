@@ -111,9 +111,11 @@
     <Compile Include="Block.cs" />
     <Compile Include="Bomb.cs" />
     <Compile Include="Bullet.cs" />
+    <Compile Include="CollectionExtensions.cs" />
     <Compile Include="Door.cs" />
     <Compile Include="DoorOpen.cs" />
     <Compile Include="Enemy.cs" />
+    <Compile Include="Fly.cs" />
     <Compile Include="IDoor.cs" />
     <Compile Include="ISolid.cs" />
     <Compile Include="Item.cs" />

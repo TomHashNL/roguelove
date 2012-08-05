@@ -16,6 +16,7 @@ namespace Roguelove
         PlayerControlState playerControlState;
         PlayerControlState playerControlStatePrevious;
         int shot;
+        bool hurt;
 
         public Player(Room room, PlayerControl playerControl, Vector2 position, Vector2 velocity)
             : base(room)
@@ -115,6 +116,7 @@ namespace Roguelove
                 typeof(ISolid),
                 typeof(Door),
                 typeof(LockedDoor),
+                typeof(Item),
             }), true);
 
             position += velocity;
@@ -125,6 +127,17 @@ namespace Roguelove
                     room.Instantiate(new Bullet(room, position, Vector2.Normalize(playerControlState.fire) * 15 + velocity / 2, playerControl.damage));
                     shot = 10;
                 }
+        }
+
+        public void Health(int healthDelta)
+        {
+            playerControl.healthMax += healthDelta;
+
+            if (playerControl.health <= 0)
+                room.map.game.GameStateChange(new Map(room.map.game, room.map.playersControl, 0));
+
+            if (playerControl.health > playerControl.healthMax)
+                playerControl.health = playerControl.healthMax;
         }
 
         private void Bomb()
