@@ -30,6 +30,8 @@ namespace Roguelove
             this.origin = new Vector2(texture.Width, texture.Height) / 2;
 
             this.radius = 32;
+
+            if (playerControl.inputType == InputType.Gamepad1) texture = room.map.game.Content.Load<Texture2D>("block");
         }
 
         protected override void OnDestroy()

@@ -10,7 +10,7 @@ namespace Roguelove
     public class Blob : Enemy, ISolid
     {
         public Blob(Room room, Vector2 position)
-            : base(room, position, 6, 2)
+            : base(room, position, 4, 1)
         {
             texture = room.map.game.Content.Load<Texture2D>("enemy");
             origin = new Vector2(texture.Width, texture.Height) / 2;
@@ -42,7 +42,7 @@ namespace Roguelove
 
                 //Generate grid thingie
                 Entity[,] grid = new Entity[room.tilesWidth, room.tilesHeight];
-                var kewlstuff = room.entities.Where(e => e is IDoor || e is Block || e is WallBlock || e is Hole);
+                var kewlstuff = room.entities.Where(e => e is IDoor || e is Block || e is WallBlock || e is Hole || e is Enemy);
                 foreach (var shit in kewlstuff)
                     grid[(int)shit.position.X / room.tileSize, (int)shit.position.Y / room.tileSize] = shit;
 

@@ -26,7 +26,7 @@ namespace Roguelove
         public readonly int viewWidth = 1472;
         public readonly int viewHeight = 1080;
 
-        public readonly double blockRate = 0.125;
+        public readonly double blockRate = 0.0625;
         public readonly double blockEdgeRate = 0.5;
         public readonly double blockCornerRate = 0.125;
 
@@ -133,7 +133,7 @@ namespace Roguelove
 
             //blargh boss here ;D
             //Spawn some mobs?!
-            int count = map.game.random.Next(16 + map.floor * 4);
+            int count = 10 + map.floor * 1 + map.game.random.Next(4 + map.floor * 2);
             for (int i = 0; i < count; i++)
             {
                 List<Point> potentialPlaces = new List<Point>();
@@ -278,6 +278,9 @@ namespace Roguelove
                     }
                 }
 
+                //Make a hole in the middle for the rewards or something lolwut i dont even...
+                grid[tilesWidth / 2, tilesHeight / 2] = null;
+
                 //Check if accessible between open doors
                 bool[,] visited = new bool[tilesWidth, tilesHeight];
                 List<Point> newPoints = new List<Point>();
@@ -340,7 +343,7 @@ namespace Roguelove
                 }
 
                 //Spawn some mobs?!
-                int count = map.game.random.Next(6 + 3 * map.floor);
+                int count = map.floor + map.game.random.Next(4 + 1 * map.floor);
                 for (int i = 0; i < count; i++)
                 {
                     List<Point> potentialPlaces = new List<Point>();
@@ -418,7 +421,7 @@ namespace Roguelove
                 if (clear)
                     if (!clearPrevious)
                     {
-                        Vector2 position = new Vector2(100);
+                        Vector2 position = new Vector2(tilesWidth / 2 +.5f, tilesHeight / 2 +.5f) * tileSize;
 
                         switch (roomType)
                         {
@@ -444,7 +447,8 @@ namespace Roguelove
             foreach (var playerControl in map.playersControl)
             {
                 playerControl.healthMax++;
-                playerControl.health++;
+                if (playerControl.health > 0)
+                    playerControl.health++;
 
                 playerControl.fireRate++;
                 playerControl.damage += .3f;

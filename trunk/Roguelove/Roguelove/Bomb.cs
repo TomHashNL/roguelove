@@ -9,7 +9,7 @@ namespace Roguelove
 {
     public class Bomb : Entity, ISolid
     {
-        int frames;
+        int countDown;
         float blastRadius;
         private float damage;
 
@@ -24,7 +24,9 @@ namespace Roguelove
 
             this.blastRadius = room.tileSize * 4f;
 
-            this.damage = 4;
+            this.damage = 6;
+
+            this.countDown = 120;
         }
 
         protected override void OnDestroy()
@@ -34,7 +36,7 @@ namespace Roguelove
 
         public override void Update()
         {
-            frames++;
+            countDown--;
 
             if (!collidable)
                 if (room.map.playersControl.Where(e => e.player != null && (position - e.player.position).LengthSquared() < room.tileSize * room.tileSize).Count() == 0)
@@ -54,7 +56,7 @@ namespace Roguelove
             position += velocity;
 
             //bomb destroy
-            if (frames > 150)
+            if (countDown <= 0)
             {
                 Destroy();
                 foreach (var entity in room.entities)
@@ -70,13 +72,19 @@ namespace Roguelove
 
                             if (entity is Enemy) (entity as Enemy).Health(-damage);
 
+                            {//player
+                                var player = entity as Player;
+                                if (player != null)
+                                    player.Health(-2);
+                            }
+
                             if (entity is Block && distance < blastRadius / 2)
                             {
                                 entity.Destroy();
 
                                 //Fill holes
-                                Vector2 gridPos = new Vector2((int)((position.X)/room.tileSize)*room.tileSize, (int)((position.Y)/room.tileSize)*room.tileSize);
-                                
+                                Vector2 gridPos = new Vector2((int)((position.X) / room.tileSize) * room.tileSize, (int)((position.Y) / room.tileSize) * room.tileSize);
+
                                 Vector2 delta = entity.position - gridPos;
                                 if (delta.Length() == room.tileSize)
                                 {

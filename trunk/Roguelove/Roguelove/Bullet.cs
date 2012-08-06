@@ -47,7 +47,7 @@ namespace Roguelove
                 if (enemy != null)
                 {
                     enemy.Health(-damage);
-                    enemy.velocity += Vector2.Normalize(velocity) * 4;
+                    enemy.velocity += Vector2.Normalize(velocity) * 6;
                 }
                 Destroy();
             }
