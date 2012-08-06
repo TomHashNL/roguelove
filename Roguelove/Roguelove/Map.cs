@@ -162,6 +162,8 @@ namespace Roguelove
             {
                 //FIND THE MIDDLE OF THE ROOM HERE TO PLACE PLAYERS???
                 playerControl.player = new Player(this.room, playerControl, position, Vector2.Zero);
+                if (playerControl.health <= 0)
+                    playerControl.health = 2;
                 this.room.Instantiate(playerControl.player);
             }
         }

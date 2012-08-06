@@ -17,7 +17,7 @@ namespace Roguelove
             if (velocity)
             {
                 double rotation = room.map.game.random.NextDouble() * Math.PI;
-                float speed = (float)room.map.game.random.NextDouble() * .1f;
+                float speed = 5f;
                 this.velocity = new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * speed;
             }
         }
@@ -29,7 +29,7 @@ namespace Roguelove
                 typeof(Block),
                 typeof(WallBlock),
                 typeof(Hole),
-                typeof(Door),
+                typeof(IDoor),
                 typeof(Player),
             }), true);
 

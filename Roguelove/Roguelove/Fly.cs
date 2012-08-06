@@ -10,7 +10,7 @@ namespace Roguelove
     public class Fly : Enemy
     {
         public Fly(Room room, Vector2 position)
-            : base(room, position, 3, 1)
+            : base(room, position, 2, 1)
         {
             texture = room.map.game.Content.Load<Texture2D>("fly");
             origin = new Vector2(texture.Width, texture.Height) / 2;
